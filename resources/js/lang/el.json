@@ -1,0 +1,68 @@
+{
+    "common": {
+        "save": "Αποθήκευση",
+        "cancel": "Ακύρωση",
+        "edit": "Επεξεργασία",
+        "delete": "Διαγραφή",
+        "archive": "Αρχειοθέτηση",
+        "search": "Αναζήτηση",
+        "loading": "Φόρτωση...",
+        "close": "Κλείσιμο",
+        "confirm": "Επιβεβαίωση",
+        "actions": "Ενέργειες",
+        "status": "Κατάσταση",
+        "priority": "Προτεραιότητα",
+        "yes": "Ναι",
+        "no": "Όχι",
+        "back": "Πίσω",
+        "next": "Επόμενο",
+        "create": "Δημιουργία",
+        "viewAll": "Προβολή όλων"
+    },
+    "priority": {
+        "low": "Χαμηλή",
+        "normal": "Κανονική",
+        "high": "Υψηλή",
+        "urgent": "Επείγον"
+    },
+    "expiration": {
+        "active": "Ενεργό",
+        "expiringSoon": "Λήγει σύντομα",
+        "expired": "Έληξε"
+    },
+    "nav": {
+        "admin": {
+            "dashboard": "Πίνακας Ελέγχου",
+            "clients": "Πελάτες",
+            "websites": "Ιστότοποι",
+            "requests": "Αιτήματα",
+            "tasks": "Εργασίες",
+            "calendar": "Ημερολόγιο",
+            "renewals": "Ανανεώσεις",
+            "services": "Υπηρεσίες",
+            "invoices": "Τιμολόγια",
+            "documents": "Έγγραφα",
+            "maintenance": "Συντήρηση",
+            "notifications": "Ειδοποιήσεις",
+            "reports": "Αναφορές",
+            "settings": "Ρυθμίσεις"
+        },
+        "client": {
+            "dashboard": "Πίνακας Ελέγχου",
+            "websites": "Οι Ιστότοποί μου",
+            "services": "Οι Υπηρεσίες μου",
+            "requests": "Αιτήματα",
+            "invoices": "Τιμολόγια",
+            "documents": "Έγγραφα",
+            "notes": "Σημειώσεις",
+            "reminders": "Υπενθυμίσεις",
+            "notifications": "Ειδοποιήσεις",
+            "account": "Λογαριασμός"
+        }
+    },
+    "locale": {
+        "switch": "Γλώσσα",
+        "el": "Ελληνικά",
+        "en": "Αγγλικά"
+    }
+}

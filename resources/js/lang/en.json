@@ -1,0 +1,68 @@
+{
+    "common": {
+        "save": "Save",
+        "cancel": "Cancel",
+        "edit": "Edit",
+        "delete": "Delete",
+        "archive": "Archive",
+        "search": "Search",
+        "loading": "Loading...",
+        "close": "Close",
+        "confirm": "Confirm",
+        "actions": "Actions",
+        "status": "Status",
+        "priority": "Priority",
+        "yes": "Yes",
+        "no": "No",
+        "back": "Back",
+        "next": "Next",
+        "create": "Create",
+        "viewAll": "View all"
+    },
+    "priority": {
+        "low": "Low",
+        "normal": "Normal",
+        "high": "High",
+        "urgent": "Urgent"
+    },
+    "expiration": {
+        "active": "Active",
+        "expiringSoon": "Expiring soon",
+        "expired": "Expired"
+    },
+    "nav": {
+        "admin": {
+            "dashboard": "Dashboard",
+            "clients": "Clients",
+            "websites": "Websites",
+            "requests": "Requests",
+            "tasks": "Tasks",
+            "calendar": "Calendar",
+            "renewals": "Renewals",
+            "services": "Services",
+            "invoices": "Invoices",
+            "documents": "Documents",
+            "maintenance": "Maintenance",
+            "notifications": "Notifications",
+            "reports": "Reports",
+            "settings": "Settings"
+        },
+        "client": {
+            "dashboard": "Dashboard",
+            "websites": "My Websites",
+            "services": "My Services",
+            "requests": "Requests",
+            "invoices": "Invoices",
+            "documents": "Documents",
+            "notes": "Notes",
+            "reminders": "Reminders",
+            "notifications": "Notifications",
+            "account": "Account"
+        }
+    },
+    "locale": {
+        "switch": "Language",
+        "el": "Greek",
+        "en": "English"
+    }
+}
