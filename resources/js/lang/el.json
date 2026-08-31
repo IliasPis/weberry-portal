@@ -266,5 +266,84 @@
             "purchasedByClient": "Πελάτη",
             "status": "Κατάσταση άδειας"
         }
+    },
+    "ticketCategory": {
+        "bug": "Σφάλμα",
+        "content_change": "Αλλαγή περιεχομένου",
+        "new_feature": "Νέα λειτουργία",
+        "website_change": "Αλλαγή στο website",
+        "woocommerce": "WooCommerce",
+        "product": "Προϊόν",
+        "email": "Email",
+        "hosting": "Hosting",
+        "domain": "Domain",
+        "ssl": "SSL",
+        "payment": "Πληρωμή",
+        "shipping": "Αποστολή",
+        "technical_support": "Τεχνική Υποστήριξη",
+        "billing": "Χρέωση",
+        "general_question": "Γενική Ερώτηση",
+        "other": "Άλλο"
+    },
+    "ticketStatus": {
+        "new": "Νέο",
+        "open": "Ανοιχτό",
+        "in_progress": "Σε εξέλιξη",
+        "waiting_client": "Αναμονή Πελάτη",
+        "waiting_third_party": "Αναμονή Τρίτου",
+        "scheduled": "Προγραμματισμένο",
+        "completed": "Ολοκληρώθηκε",
+        "closed": "Κλειστό",
+        "cancelled": "Ακυρώθηκε"
+    },
+    "tickets": {
+        "adminTitle": "Αιτήματα",
+        "clientTitle": "Τα Αιτήματά μου",
+        "newRequest": "Νέο Αίτημα",
+        "searchPlaceholder": "Αναζήτηση τίτλου, πελάτη...",
+        "noResults": "Δεν βρέθηκαν αιτήματα.",
+        "allCategories": "Όλες οι κατηγορίες",
+        "allPriorities": "Όλες οι προτεραιότητες",
+        "views": {
+            "open": "Ανοιχτά",
+            "unassigned": "Μη ανατεθειμένα",
+            "all": "Όλα",
+            "completed": "Ολοκληρωμένα"
+        },
+        "columns": {
+            "title": "Τίτλος",
+            "client": "Πελάτης",
+            "website": "Website",
+            "category": "Κατηγορία",
+            "priority": "Προτεραιότητα",
+            "status": "Κατάσταση",
+            "assignedTo": "Ανατέθηκε σε",
+            "created": "Δημιουργήθηκε"
+        },
+        "fields": {
+            "website": "Website",
+            "service": "Υπηρεσία",
+            "category": "Κατηγορία",
+            "priority": "Προτεραιότητα",
+            "title": "Τίτλος",
+            "description": "Περιγραφή",
+            "url": "URL / Σελίδα (προαιρετικό)",
+            "attachments": "Συνημμένα",
+            "assignedTo": "Ανατέθηκε σε",
+            "status": "Κατάσταση",
+            "none": "Κανένα"
+        },
+        "createHint": "Περιγράψτε το πρόβλημα ή το αίτημά σας όσο πιο αναλυτικά γίνεται.",
+        "sendReply": "Αποστολή απάντησης",
+        "writeReply": "Γράψτε την απάντησή σας...",
+        "internalNote": "Εσωτερική σημείωση",
+        "internalNoteToggle": "Αποστολή ως εσωτερική σημείωση (δεν θα τη δει ο πελάτης)",
+        "internalNoteBadge": "ΕΣΩΤΕΡΙΚΗ ΣΗΜΕΙΩΣΗ — ΔΕΝ ΕΙΝΑΙ ΟΡΑΤΗ ΣΤΟΝ ΠΕΛΑΤΗ",
+        "systemMessage": "Μήνυμα συστήματος",
+        "adminReplyLabel": "Απάντηση από τον διαχειριστή",
+        "you": "Εσείς",
+        "detailsTitle": "Στοιχεία Αιτήματος",
+        "createdBy": "Δημιουργήθηκε από",
+        "noWebsite": "Χωρίς website"
     }
 }

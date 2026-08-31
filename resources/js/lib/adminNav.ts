@@ -1,4 +1,4 @@
-import { Globe, LayoutDashboard, PackageCheck, Users } from '@lucide/vue';
+import { Globe, LayoutDashboard, MessageSquare, PackageCheck, Users } from '@lucide/vue';
 import type { Component } from 'vue';
 
 export interface AdminNavItem {
@@ -33,6 +33,12 @@ export const adminNavItems: AdminNavItem[] = [
         routeName: 'admin.websites.index',
         activePrefix: 'admin.websites.*',
         icon: Globe,
+    },
+    {
+        titleKey: 'nav.admin.requests',
+        routeName: 'admin.tickets.index',
+        activePrefix: 'admin.tickets.*',
+        icon: MessageSquare,
     },
     {
         titleKey: 'nav.admin.services',

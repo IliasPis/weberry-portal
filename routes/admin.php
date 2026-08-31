@@ -3,7 +3,9 @@
 use App\Http\Controllers\Admin\ClientController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ServiceController;
+use App\Http\Controllers\Admin\TicketController;
 use App\Http\Controllers\Admin\WebsiteController;
+use App\Http\Controllers\TicketMessageController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified', 'portal.admin'])
@@ -21,4 +23,9 @@ Route::middleware(['auth', 'verified', 'portal.admin'])
 
         Route::resource('services', ServiceController::class)
             ->only(['index', 'store', 'show', 'update']);
+
+        Route::resource('tickets', TicketController::class)
+            ->only(['index', 'show', 'update']);
+        Route::post('/tickets/{ticket}/messages', [TicketMessageController::class, 'store'])
+            ->name('tickets.messages.store');
     });

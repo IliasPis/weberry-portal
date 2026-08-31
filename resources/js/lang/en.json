@@ -266,5 +266,84 @@
             "purchasedByClient": "Client",
             "status": "License status"
         }
+    },
+    "ticketCategory": {
+        "bug": "Bug",
+        "content_change": "Content Change",
+        "new_feature": "New Feature",
+        "website_change": "Website Change",
+        "woocommerce": "WooCommerce",
+        "product": "Product",
+        "email": "Email",
+        "hosting": "Hosting",
+        "domain": "Domain",
+        "ssl": "SSL",
+        "payment": "Payment",
+        "shipping": "Shipping",
+        "technical_support": "Technical Support",
+        "billing": "Billing",
+        "general_question": "General Question",
+        "other": "Other"
+    },
+    "ticketStatus": {
+        "new": "New",
+        "open": "Open",
+        "in_progress": "In Progress",
+        "waiting_client": "Waiting for Client",
+        "waiting_third_party": "Waiting for Third Party",
+        "scheduled": "Scheduled",
+        "completed": "Completed",
+        "closed": "Closed",
+        "cancelled": "Cancelled"
+    },
+    "tickets": {
+        "adminTitle": "Requests",
+        "clientTitle": "My Requests",
+        "newRequest": "New Request",
+        "searchPlaceholder": "Search title, client...",
+        "noResults": "No requests found.",
+        "allCategories": "All categories",
+        "allPriorities": "All priorities",
+        "views": {
+            "open": "Open",
+            "unassigned": "Unassigned",
+            "all": "All",
+            "completed": "Completed"
+        },
+        "columns": {
+            "title": "Title",
+            "client": "Client",
+            "website": "Website",
+            "category": "Category",
+            "priority": "Priority",
+            "status": "Status",
+            "assignedTo": "Assigned To",
+            "created": "Created"
+        },
+        "fields": {
+            "website": "Website",
+            "service": "Service",
+            "category": "Category",
+            "priority": "Priority",
+            "title": "Title",
+            "description": "Description",
+            "url": "URL / Page (optional)",
+            "attachments": "Attachments",
+            "assignedTo": "Assigned To",
+            "status": "Status",
+            "none": "None"
+        },
+        "createHint": "Describe your issue or request in as much detail as possible.",
+        "sendReply": "Send Reply",
+        "writeReply": "Write your reply...",
+        "internalNote": "Internal Note",
+        "internalNoteToggle": "Send as internal note (the client will not see this)",
+        "internalNoteBadge": "INTERNAL NOTE — NOT VISIBLE TO CLIENT",
+        "systemMessage": "System message",
+        "adminReplyLabel": "Reply from your web administrator",
+        "you": "You",
+        "detailsTitle": "Request Details",
+        "createdBy": "Created by",
+        "noWebsite": "No website"
     }
 }
