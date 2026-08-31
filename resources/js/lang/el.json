@@ -267,6 +267,32 @@
             "status": "Κατάσταση άδειας"
         }
     },
+    "clientWebsites": {
+        "title": "Οι Ιστότοποί μου",
+        "noResults": "Δεν έχετε ακόμα websites.",
+        "visit": "Επίσκεψη",
+        "ssl": "SSL",
+        "hosting": "Hosting",
+        "cms": "CMS",
+        "openRequests": "Ανοιχτά αιτήματα",
+        "services": "Υπηρεσίες",
+        "noServices": "Δεν υπάρχουν υπηρεσίες σε αυτό το website.",
+        "newRequestForSite": "Νέο αίτημα για αυτό το website"
+    },
+    "clientServices": {
+        "title": "Οι Υπηρεσίες μου",
+        "noResults": "Δεν έχετε ενεργές υπηρεσίες.",
+        "columns": {
+            "service": "Υπηρεσία",
+            "website": "Website",
+            "startDate": "Έναρξη",
+            "expires": "Λήξη",
+            "price": "Τιμή",
+            "billingCycle": "Κύκλος χρέωσης",
+            "status": "Κατάσταση"
+        },
+        "noWebsite": "Γενική υπηρεσία"
+    },
     "ticketCategory": {
         "bug": "Σφάλμα",
         "content_change": "Αλλαγή περιεχομένου",

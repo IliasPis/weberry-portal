@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\TicketOptions;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -35,5 +36,15 @@ class Website extends Model
     public function services(): HasMany
     {
         return $this->hasMany(Service::class);
+    }
+
+    public function tickets(): HasMany
+    {
+        return $this->hasMany(Ticket::class);
+    }
+
+    public function openTickets(): HasMany
+    {
+        return $this->tickets()->whereIn('status', TicketOptions::OPEN_STATUSES);
     }
 }

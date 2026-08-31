@@ -267,6 +267,32 @@
             "status": "License status"
         }
     },
+    "clientWebsites": {
+        "title": "My Websites",
+        "noResults": "You don't have any websites yet.",
+        "visit": "Visit",
+        "ssl": "SSL",
+        "hosting": "Hosting",
+        "cms": "CMS",
+        "openRequests": "Open requests",
+        "services": "Services",
+        "noServices": "No services on this website.",
+        "newRequestForSite": "New request for this website"
+    },
+    "clientServices": {
+        "title": "My Services",
+        "noResults": "You don't have any active services.",
+        "columns": {
+            "service": "Service",
+            "website": "Website",
+            "startDate": "Start",
+            "expires": "Expires",
+            "price": "Price",
+            "billingCycle": "Billing Cycle",
+            "status": "Status"
+        },
+        "noWebsite": "General service"
+    },
     "ticketCategory": {
         "bug": "Bug",
         "content_change": "Content Change",

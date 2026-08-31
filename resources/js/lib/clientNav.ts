@@ -1,4 +1,4 @@
-import { LayoutDashboard, MessageSquare } from '@lucide/vue';
+import { Globe, LayoutDashboard, MessageSquare, PackageCheck } from '@lucide/vue';
 import type { Component } from 'vue';
 
 export interface ClientNavItem {
@@ -10,7 +10,7 @@ export interface ClientNavItem {
 
 /**
  * Same data-driven approach as lib/adminNav.ts - each future client-portal
- * module (My Websites, My Services, Invoices, ...) adds one entry here.
+ * module (Invoices, Documents, ...) adds one entry here.
  */
 export const clientNavItems: ClientNavItem[] = [
     {
@@ -18,6 +18,18 @@ export const clientNavItems: ClientNavItem[] = [
         routeName: 'client.dashboard',
         activePrefix: 'client.dashboard',
         icon: LayoutDashboard,
+    },
+    {
+        titleKey: 'nav.client.websites',
+        routeName: 'client.websites.index',
+        activePrefix: 'client.websites.*',
+        icon: Globe,
+    },
+    {
+        titleKey: 'nav.client.services',
+        routeName: 'client.services.index',
+        activePrefix: 'client.services.*',
+        icon: PackageCheck,
     },
     {
         titleKey: 'nav.client.requests',

@@ -4,12 +4,17 @@ namespace App\Policies;
 
 use App\Models\Service;
 use App\Models\User;
+use App\Support\PortalRoles;
 
 class ServicePolicy
 {
+    /**
+     * Admin-side lists every service; a client-side user lists their own
+     * (scoped by client_id in the controller query).
+     */
     public function viewAny(User $user): bool
     {
-        return $user->can('services.manage');
+        return $user->can('services.manage') || $user->hasAnyRole(PortalRoles::CLIENT_SIDE);
     }
 
     /**

@@ -43,10 +43,15 @@ test('a client user cannot view another client\'s client, website, or service', 
     expect($this->userA->can('view', $this->serviceB))->toBeFalse();
 });
 
-test('a client user can never list clients, websites, or services', function () {
+test('a client user can never list other clients, but can list their own websites and services', function () {
+    // Client is the odd one out: a client user never lists clients at all
+    // (not even a filtered list of one) since the whole concept doesn't
+    // apply to their own portal. Websites/Services are different - "My
+    // Websites" and "My Services" are real client-portal pages, scoped to
+    // their own client_id by the controller query, not denied outright.
     expect($this->userA->can('viewAny', Client::class))->toBeFalse();
-    expect($this->userA->can('viewAny', Website::class))->toBeFalse();
-    expect($this->userA->can('viewAny', Service::class))->toBeFalse();
+    expect($this->userA->can('viewAny', Website::class))->toBeTrue();
+    expect($this->userA->can('viewAny', Service::class))->toBeTrue();
 });
 
 test('a client user can never manage any client, website, or service', function () {
