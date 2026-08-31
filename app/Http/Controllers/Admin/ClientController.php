@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreClientRequest;
 use App\Http\Requests\Admin\UpdateClientRequest;
 use App\Models\Client;
+use App\Models\ServiceType;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -64,6 +65,7 @@ class ClientController extends Controller
 
         return Inertia::render('Admin/Clients/Show', [
             'client' => $client,
+            'serviceTypes' => ServiceType::query()->orderBy('name')->get(['id', 'name', 'category']),
         ]);
     }
 

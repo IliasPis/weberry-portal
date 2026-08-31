@@ -6,10 +6,13 @@ import AdminLayout from '@/Layouts/AdminLayout.vue';
 import ClientStatusBadge from '@/Components/admin/ClientStatusBadge.vue';
 import PriorityBadge from '@/Components/shared/PriorityBadge.vue';
 import ClientFormDialog from '@/Components/admin/ClientFormDialog.vue';
+import WebsiteFormDialog from '@/Components/admin/WebsiteFormDialog.vue';
+import ServiceFormDialog from '@/Components/admin/ServiceFormDialog.vue';
+import ExpirationBadge from '@/Components/shared/ExpirationBadge.vue';
 import { Button } from '@/Components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/Components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Components/ui/tabs';
-import { ArrowLeft } from '@lucide/vue';
+import { ArrowLeft, Plus } from '@lucide/vue';
 import { formatDate } from '@/lib/format';
 
 interface WebsiteRow {
@@ -25,7 +28,7 @@ interface ServiceRow {
     status: string;
     client_price: string | number | null;
     expiration_date: string | null;
-    service_type: { name: string } | null;
+    service_type: { id: number; name: string; category: string } | null;
 }
 
 interface ClientDetail {
@@ -49,11 +52,16 @@ interface ClientDetail {
     services: ServiceRow[];
 }
 
-const props = defineProps<{ client: ClientDetail }>();
+const props = defineProps<{
+    client: ClientDetail;
+    serviceTypes: { id: number; name: string; category: string }[];
+}>();
 
 const { t, locale } = useI18n();
 
 const dialogOpen = ref(false);
+const websiteDialogOpen = ref(false);
+const serviceDialogOpen = ref(false);
 </script>
 
 <template>
@@ -118,38 +126,48 @@ const dialogOpen = ref(false);
                     </Card>
                 </TabsContent>
 
-                <TabsContent value="websites">
+                <TabsContent value="websites" class="space-y-3">
+                    <div class="flex justify-end">
+                        <Button size="sm" @click="websiteDialogOpen = true">
+                            <Plus class="h-4 w-4" />
+                            {{ t('websites.newWebsite') }}
+                        </Button>
+                    </div>
                     <div v-if="client.websites.length === 0" class="text-sm text-muted-foreground">
                         {{ t('clients.overview.noWebsites') }}
                     </div>
                     <div v-else class="grid gap-3 sm:grid-cols-2">
                         <Card v-for="website in client.websites" :key="website.id">
                             <CardContent class="flex items-center justify-between p-4">
-                                <div>
+                                <Link :href="route('admin.websites.show', website.id)" class="hover:underline">
                                     <p class="font-medium">{{ website.name }}</p>
                                     <p class="text-sm text-muted-foreground">{{ website.domain }}</p>
-                                </div>
+                                </Link>
                             </CardContent>
                         </Card>
                     </div>
                 </TabsContent>
 
-                <TabsContent value="services">
+                <TabsContent value="services" class="space-y-3">
+                    <div class="flex justify-end">
+                        <Button size="sm" @click="serviceDialogOpen = true">
+                            <Plus class="h-4 w-4" />
+                            {{ t('services.newService') }}
+                        </Button>
+                    </div>
                     <div v-if="client.services.length === 0" class="text-sm text-muted-foreground">
                         {{ t('clients.overview.noServices') }}
                     </div>
                     <div v-else class="grid gap-3 sm:grid-cols-2">
                         <Card v-for="service in client.services" :key="service.id">
                             <CardContent class="flex items-center justify-between p-4">
-                                <div>
+                                <Link :href="route('admin.services.show', service.id)" class="hover:underline">
                                     <p class="font-medium">{{ service.name }}</p>
                                     <p class="text-sm text-muted-foreground">{{ service.service_type?.name }}</p>
-                                </div>
+                                </Link>
                                 <div class="text-right text-sm">
                                     <p class="font-medium">€{{ service.client_price }}</p>
-                                    <p class="text-muted-foreground">
-                                        {{ t('clients.overview.expires') }}: {{ formatDate(service.expiration_date, locale) }}
-                                    </p>
+                                    <ExpirationBadge :date="service.expiration_date" />
                                 </div>
                             </CardContent>
                         </Card>
@@ -159,5 +177,17 @@ const dialogOpen = ref(false);
         </div>
 
         <ClientFormDialog v-model:open="dialogOpen" :client="client" />
+        <WebsiteFormDialog
+            v-model:open="websiteDialogOpen"
+            :clients="[{ id: client.id, company_name: client.company_name }]"
+            :locked-client-id="client.id"
+        />
+        <ServiceFormDialog
+            v-model:open="serviceDialogOpen"
+            :clients="[{ id: client.id, company_name: client.company_name }]"
+            :websites="client.websites.map((w) => ({ id: w.id, client_id: client.id, domain: w.domain }))"
+            :service-types="serviceTypes"
+            :locked-client-id="client.id"
+        />
     </AdminLayout>
 </template>

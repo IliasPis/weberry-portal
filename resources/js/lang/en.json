@@ -48,7 +48,9 @@
     "expiration": {
         "active": "Active",
         "expiringSoon": "Expiring soon",
-        "expired": "Expired"
+        "expired": "Expired",
+        "expiresInDays": "Expires in {days}d",
+        "noExpiration": "No expiration"
     },
     "nav": {
         "admin": {
@@ -136,6 +138,133 @@
             "noWebsites": "No websites yet.",
             "noServices": "No services yet.",
             "expires": "Expires"
+        }
+    },
+    "websiteStatus": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "maintenance": "Under maintenance"
+    },
+    "serviceStatus": {
+        "active": "Active",
+        "pending": "Pending",
+        "expired": "Expired",
+        "cancelled": "Cancelled"
+    },
+    "billingCycle": {
+        "monthly": "Monthly",
+        "quarterly": "Quarterly",
+        "yearly": "Yearly",
+        "one_time": "One-time"
+    },
+    "websites": {
+        "title": "Websites",
+        "newWebsite": "New Website",
+        "editWebsite": "Edit Website",
+        "searchPlaceholder": "Search domain, name, client...",
+        "allStatuses": "All statuses",
+        "noResults": "No websites found.",
+        "columns": {
+            "website": "Website",
+            "client": "Client",
+            "status": "Status",
+            "ssl": "SSL",
+            "services": "Services"
+        },
+        "fields": {
+            "client": "Client",
+            "name": "Name",
+            "domain": "Domain",
+            "productionUrl": "Production URL",
+            "stagingUrl": "Staging URL",
+            "cms": "CMS",
+            "wpVersion": "WordPress version",
+            "wooVersion": "WooCommerce version",
+            "theme": "Theme",
+            "hostingProvider": "Hosting provider",
+            "hostingPackage": "Hosting package",
+            "server": "Server",
+            "serverIp": "Server IP",
+            "phpVersion": "PHP version",
+            "databaseName": "Database name",
+            "cdnProvider": "CDN",
+            "cloudflareEnabled": "Cloudflare enabled",
+            "sslProvider": "SSL provider",
+            "sslExpiresAt": "SSL expires",
+            "analyticsId": "Analytics ID",
+            "searchConsole": "Search Console",
+            "smtpProvider": "SMTP provider",
+            "backupProvider": "Backup provider",
+            "status": "Status",
+            "internalNotes": "Internal notes",
+            "clientVisibleNotes": "Client-visible notes"
+        },
+        "tabs": {
+            "overview": "Overview",
+            "technical": "Technical",
+            "services": "Services"
+        }
+    },
+    "services": {
+        "title": "Services",
+        "newService": "New Service",
+        "editService": "Edit Service",
+        "searchPlaceholder": "Search service, client, domain...",
+        "allStatuses": "All statuses",
+        "allCategories": "All categories",
+        "noResults": "No services found.",
+        "columns": {
+            "service": "Service",
+            "client": "Client",
+            "website": "Website",
+            "price": "Price",
+            "expires": "Expires",
+            "status": "Status"
+        },
+        "fields": {
+            "client": "Client",
+            "website": "Website",
+            "serviceType": "Service type",
+            "name": "Name",
+            "provider": "Provider",
+            "startDate": "Start date",
+            "expirationDate": "Expiration date",
+            "renewalDate": "Renewal date",
+            "billingCycle": "Billing cycle",
+            "internalCost": "Internal cost",
+            "clientPrice": "Client price",
+            "autoRenewal": "Auto renewal",
+            "status": "Status",
+            "notesInternal": "Internal notes",
+            "notesClient": "Client notes"
+        },
+        "hostingDetails": "Hosting details",
+        "domainDetails": "Domain details",
+        "maintenanceDetails": "Maintenance details",
+        "licenseDetails": "License details",
+        "hosting": {
+            "package": "Package",
+            "server": "Server",
+            "ip": "IP",
+            "storage": "Storage"
+        },
+        "domain": {
+            "registrar": "Registrar",
+            "nameservers": "Nameservers",
+            "dnsProvider": "DNS provider"
+        },
+        "maintenance": {
+            "plan": "Plan",
+            "includedHours": "Included hours",
+            "usedHours": "Used hours",
+            "sla": "SLA"
+        },
+        "license": {
+            "type": "License type",
+            "purchasedBy": "Purchased by",
+            "purchasedByUs": "Us",
+            "purchasedByClient": "Client",
+            "status": "License status"
         }
     }
 }

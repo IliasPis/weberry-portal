@@ -48,7 +48,9 @@
     "expiration": {
         "active": "Ενεργό",
         "expiringSoon": "Λήγει σύντομα",
-        "expired": "Έληξε"
+        "expired": "Έληξε",
+        "expiresInDays": "Λήγει σε {days} ημ.",
+        "noExpiration": "Χωρίς λήξη"
     },
     "nav": {
         "admin": {
@@ -136,6 +138,133 @@
             "noWebsites": "Δεν υπάρχουν websites ακόμα.",
             "noServices": "Δεν υπάρχουν υπηρεσίες ακόμα.",
             "expires": "Λήγει"
+        }
+    },
+    "websiteStatus": {
+        "active": "Ενεργό",
+        "inactive": "Ανενεργό",
+        "maintenance": "Σε συντήρηση"
+    },
+    "serviceStatus": {
+        "active": "Ενεργή",
+        "pending": "Εκκρεμεί",
+        "expired": "Έληξε",
+        "cancelled": "Ακυρώθηκε"
+    },
+    "billingCycle": {
+        "monthly": "Μηνιαία",
+        "quarterly": "Τριμηνιαία",
+        "yearly": "Ετήσια",
+        "one_time": "Εφάπαξ"
+    },
+    "websites": {
+        "title": "Websites",
+        "newWebsite": "Νέο Website",
+        "editWebsite": "Επεξεργασία Website",
+        "searchPlaceholder": "Αναζήτηση domain, ονόματος, πελάτη...",
+        "allStatuses": "Όλες οι καταστάσεις",
+        "noResults": "Δεν βρέθηκαν websites.",
+        "columns": {
+            "website": "Website",
+            "client": "Πελάτης",
+            "status": "Κατάσταση",
+            "ssl": "SSL",
+            "services": "Υπηρεσίες"
+        },
+        "fields": {
+            "client": "Πελάτης",
+            "name": "Όνομα",
+            "domain": "Domain",
+            "productionUrl": "URL παραγωγής",
+            "stagingUrl": "URL δοκιμών (staging)",
+            "cms": "CMS",
+            "wpVersion": "Έκδοση WordPress",
+            "wooVersion": "Έκδοση WooCommerce",
+            "theme": "Theme",
+            "hostingProvider": "Πάροχος hosting",
+            "hostingPackage": "Πακέτο hosting",
+            "server": "Server",
+            "serverIp": "IP server",
+            "phpVersion": "Έκδοση PHP",
+            "databaseName": "Βάση δεδομένων",
+            "cdnProvider": "CDN",
+            "cloudflareEnabled": "Ενεργό Cloudflare",
+            "sslProvider": "Πάροχος SSL",
+            "sslExpiresAt": "Λήξη SSL",
+            "analyticsId": "Analytics ID",
+            "searchConsole": "Search Console",
+            "smtpProvider": "Πάροχος SMTP",
+            "backupProvider": "Πάροχος backup",
+            "status": "Κατάσταση",
+            "internalNotes": "Εσωτερικές σημειώσεις",
+            "clientVisibleNotes": "Σημειώσεις ορατές στον πελάτη"
+        },
+        "tabs": {
+            "overview": "Επισκόπηση",
+            "technical": "Τεχνικά",
+            "services": "Υπηρεσίες"
+        }
+    },
+    "services": {
+        "title": "Υπηρεσίες",
+        "newService": "Νέα Υπηρεσία",
+        "editService": "Επεξεργασία Υπηρεσίας",
+        "searchPlaceholder": "Αναζήτηση υπηρεσίας, πελάτη, domain...",
+        "allStatuses": "Όλες οι καταστάσεις",
+        "allCategories": "Όλες οι κατηγορίες",
+        "noResults": "Δεν βρέθηκαν υπηρεσίες.",
+        "columns": {
+            "service": "Υπηρεσία",
+            "client": "Πελάτης",
+            "website": "Website",
+            "price": "Τιμή",
+            "expires": "Λήξη",
+            "status": "Κατάσταση"
+        },
+        "fields": {
+            "client": "Πελάτης",
+            "website": "Website",
+            "serviceType": "Τύπος υπηρεσίας",
+            "name": "Όνομα",
+            "provider": "Πάροχος",
+            "startDate": "Ημ. έναρξης",
+            "expirationDate": "Ημ. λήξης",
+            "renewalDate": "Ημ. ανανέωσης",
+            "billingCycle": "Κύκλος χρέωσης",
+            "internalCost": "Εσωτερικό κόστος",
+            "clientPrice": "Τιμή πελάτη",
+            "autoRenewal": "Αυτόματη ανανέωση",
+            "status": "Κατάσταση",
+            "notesInternal": "Εσωτερικές σημειώσεις",
+            "notesClient": "Σημειώσεις πελάτη"
+        },
+        "hostingDetails": "Στοιχεία Hosting",
+        "domainDetails": "Στοιχεία Domain",
+        "maintenanceDetails": "Στοιχεία Συντήρησης",
+        "licenseDetails": "Στοιχεία Άδειας",
+        "hosting": {
+            "package": "Πακέτο",
+            "server": "Server",
+            "ip": "IP",
+            "storage": "Αποθηκευτικός χώρος"
+        },
+        "domain": {
+            "registrar": "Registrar",
+            "nameservers": "Nameservers",
+            "dnsProvider": "Πάροχος DNS"
+        },
+        "maintenance": {
+            "plan": "Πλάνο",
+            "includedHours": "Συμπερ/νες ώρες",
+            "usedHours": "Χρησιμοποιημένες ώρες",
+            "sla": "SLA"
+        },
+        "license": {
+            "type": "Τύπος άδειας",
+            "purchasedBy": "Αγοράστηκε από",
+            "purchasedByUs": "Εμάς",
+            "purchasedByClient": "Πελάτη",
+            "status": "Κατάσταση άδειας"
         }
     }
 }
