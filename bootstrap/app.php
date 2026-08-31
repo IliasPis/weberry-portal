@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Middleware\EnsureAdminPortal;
+use App\Http\Middleware\EnsureClientPortal;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\SetLocale;
 use Illuminate\Foundation\Application;
@@ -21,7 +23,10 @@ return Application::configure(basePath: dirname(__DIR__))
             AddLinkHeadersForPreloadedAssets::class,
         ]);
 
-        //
+        $middleware->alias([
+            'portal.admin' => EnsureAdminPortal::class,
+            'portal.client' => EnsureClientPortal::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

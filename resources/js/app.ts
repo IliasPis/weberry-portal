@@ -1,6 +1,6 @@
 import '../css/app.css';
 
-import { createInertiaApp } from '@inertiajs/vue3';
+import { createInertiaApp, router } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createApp, DefineComponent, h } from 'vue';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
@@ -18,6 +18,16 @@ createInertiaApp({
     setup({ el, App, props, plugin }) {
         const locale = (props.initialPage.props.locale as AppLocale) ?? 'el';
         const i18n = createAppI18n(locale);
+
+        // Keep the i18n instance in sync when the backend-resolved locale
+        // (session/user preference) changes between Inertia visits, e.g.
+        // after posting to /locale, without forcing a full page reload.
+        router.on('success', (event) => {
+            const nextLocale = event.detail.page.props.locale as AppLocale | undefined;
+            if (nextLocale && nextLocale !== i18n.global.locale.value) {
+                i18n.global.locale.value = nextLocale;
+            }
+        });
 
         createApp({ render: () => h(App, props) })
             .use(plugin)
