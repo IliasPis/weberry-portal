@@ -84,5 +84,58 @@
         "switch": "Language",
         "el": "Greek",
         "en": "English"
+    },
+    "clientStatus": {
+        "lead": "Lead",
+        "active": "Active",
+        "inactive": "Inactive",
+        "suspended": "Suspended",
+        "archived": "Archived"
+    },
+    "clients": {
+        "title": "Clients",
+        "newClient": "New Client",
+        "editClient": "Edit Client",
+        "searchPlaceholder": "Search company, VAT, email, phone, domain...",
+        "allStatuses": "All statuses",
+        "allPriorities": "All priorities",
+        "noResults": "No clients found.",
+        "archive": "Archive",
+        "archiveConfirm": "Archive client \"{name}\"?",
+        "columns": {
+            "company": "Company",
+            "status": "Status",
+            "priority": "Priority",
+            "websites": "Websites",
+            "services": "Services",
+            "nextAction": "Next Action"
+        },
+        "tabs": {
+            "overview": "Overview",
+            "websites": "Websites",
+            "services": "Services"
+        },
+        "fields": {
+            "companyName": "Company name",
+            "contactName": "Contact name",
+            "vatNumber": "VAT number",
+            "taxOffice": "Tax office",
+            "email": "Email",
+            "phone": "Phone",
+            "address": "Address",
+            "billingEmail": "Billing email",
+            "technicalEmail": "Technical email",
+            "status": "Status",
+            "priority": "Priority",
+            "startDate": "Start date",
+            "internalNotes": "Internal notes",
+            "clientVisibleNotes": "Client-visible notes",
+            "nextAction": "Next action"
+        },
+        "overview": {
+            "noWebsites": "No websites yet.",
+            "noServices": "No services yet.",
+            "expires": "Expires"
+        }
     }
 }

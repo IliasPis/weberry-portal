@@ -84,5 +84,58 @@
         "switch": "Γλώσσα",
         "el": "Ελληνικά",
         "en": "Αγγλικά"
+    },
+    "clientStatus": {
+        "lead": "Lead",
+        "active": "Ενεργός",
+        "inactive": "Ανενεργός",
+        "suspended": "Σε αναστολή",
+        "archived": "Αρχειοθετημένος"
+    },
+    "clients": {
+        "title": "Πελάτες",
+        "newClient": "Νέος Πελάτης",
+        "editClient": "Επεξεργασία Πελάτη",
+        "searchPlaceholder": "Αναζήτηση εταιρείας, ΑΦΜ, email, τηλεφώνου, domain...",
+        "allStatuses": "Όλες οι καταστάσεις",
+        "allPriorities": "Όλες οι προτεραιότητες",
+        "noResults": "Δεν βρέθηκαν πελάτες.",
+        "archive": "Αρχειοθέτηση",
+        "archiveConfirm": "Να αρχειοθετηθεί ο πελάτης \"{name}\";",
+        "columns": {
+            "company": "Εταιρεία",
+            "status": "Κατάσταση",
+            "priority": "Προτεραιότητα",
+            "websites": "Websites",
+            "services": "Υπηρεσίες",
+            "nextAction": "Επόμενη Ενέργεια"
+        },
+        "tabs": {
+            "overview": "Επισκόπηση",
+            "websites": "Websites",
+            "services": "Υπηρεσίες"
+        },
+        "fields": {
+            "companyName": "Επωνυμία",
+            "contactName": "Όνομα επαφής",
+            "vatNumber": "ΑΦΜ",
+            "taxOffice": "ΔΟΥ",
+            "email": "Email",
+            "phone": "Τηλέφωνο",
+            "address": "Διεύθυνση",
+            "billingEmail": "Email τιμολόγησης",
+            "technicalEmail": "Τεχνικό email",
+            "status": "Κατάσταση",
+            "priority": "Προτεραιότητα",
+            "startDate": "Ημερομηνία έναρξης",
+            "internalNotes": "Εσωτερικές σημειώσεις",
+            "clientVisibleNotes": "Σημειώσεις ορατές στον πελάτη",
+            "nextAction": "Επόμενη ενέργεια"
+        },
+        "overview": {
+            "noWebsites": "Δεν υπάρχουν websites ακόμα.",
+            "noServices": "Δεν υπάρχουν υπηρεσίες ακόμα.",
+            "expires": "Λήγει"
+        }
     }
 }
