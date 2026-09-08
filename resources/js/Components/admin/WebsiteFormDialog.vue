@@ -162,13 +162,13 @@ function submit() {
 
 <template>
     <Dialog :open="open" @update:open="(v) => emit('update:open', v)">
-        <DialogContent class="max-h-[90vh] max-w-3xl overflow-y-auto">
+        <DialogContent class="max-h-[90vh] max-w-3xl overflow-y-auto xl:max-w-5xl">
             <DialogHeader>
                 <DialogTitle>{{ isEditing ? t('websites.editWebsite') : t('websites.newWebsite') }}</DialogTitle>
                 <DialogDescription />
             </DialogHeader>
 
-            <form class="grid grid-cols-2 gap-4" @submit.prevent="submit">
+            <form class="grid grid-cols-1 gap-x-5 gap-y-5 sm:grid-cols-2" @submit.prevent="submit">
                 <div v-if="!lockedClientId">
                     <Label>{{ t('websites.fields.client') }}</Label>
                     <Select v-model="form.client_id">

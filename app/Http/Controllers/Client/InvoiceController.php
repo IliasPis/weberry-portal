@@ -15,7 +15,9 @@ class InvoiceController extends Controller
         $this->authorize('viewAny', Invoice::class);
 
         $invoices = Invoice::query()
+            ->withTrashed()
             ->where('client_id', $request->user()->client_id)
+            ->where('status', '!=', 'draft')
             ->with(['website:id,domain', 'pdfFile'])
             ->orderByDesc('issue_date')
             ->get();

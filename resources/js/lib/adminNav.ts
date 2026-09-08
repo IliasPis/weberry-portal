@@ -7,6 +7,7 @@ import {
     MessageSquare,
     PackageCheck,
     Receipt,
+    Settings,
     Users,
 } from '@lucide/vue';
 import type { Component } from 'vue';
@@ -79,5 +80,11 @@ export const adminNavItems: AdminNavItem[] = [
         routeName: 'admin.documents.index',
         activePrefix: 'admin.documents.*',
         icon: FileText,
+    },
+    {
+        titleKey: 'nav.admin.settings',
+        routeName: 'admin.settings.serviceTypes',
+        activePrefix: 'admin.settings.*',
+        icon: Settings,
     },
 ];

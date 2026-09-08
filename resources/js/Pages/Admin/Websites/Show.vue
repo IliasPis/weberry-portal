@@ -1,17 +1,18 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import WebsiteFormDialog, { type WebsiteRecord } from '@/Components/admin/WebsiteFormDialog.vue';
 import MaintenanceLogDialog from '@/Components/admin/MaintenanceLogDialog.vue';
 import NotePanel from '@/Components/admin/NotePanel.vue';
+import DeleteConfirmDialog from '@/Components/admin/DeleteConfirmDialog.vue';
 import ExpirationBadge from '@/Components/shared/ExpirationBadge.vue';
 import { Badge } from '@/Components/ui/badge';
 import { Button } from '@/Components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/Components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Components/ui/tabs';
-import { ArrowLeft, ExternalLink, Plus } from '@lucide/vue';
+import { ArrowLeft, ExternalLink, Plus, Trash2 } from '@lucide/vue';
 import { formatDate } from '@/lib/format';
 
 interface ServiceRow {
@@ -53,6 +54,13 @@ const props = defineProps<{ website: WebsiteDetail }>();
 
 const { t, locale } = useI18n();
 const dialogOpen = ref(false);
+const deleteDialogOpen = ref(false);
+
+function confirmDelete(alsoForClient: boolean) {
+    router.delete(route('admin.websites.destroy', props.website.id), {
+        data: { also_for_client: alsoForClient },
+    });
+}
 const maintenanceDialogOpen = ref(false);
 </script>
 
@@ -80,17 +88,24 @@ const maintenanceDialogOpen = ref(false);
                         </div>
                     </div>
                 </div>
-                <Button variant="outline" @click="dialogOpen = true">{{ t('common.edit') }}</Button>
+                <div class="flex items-center gap-2">
+                    <Button variant="outline" @click="dialogOpen = true">{{ t('common.edit') }}</Button>
+                    <Button variant="outline" size="icon" class="text-destructive hover:text-destructive" :title="t('common.delete')" @click="deleteDialogOpen = true">
+                        <Trash2 class="h-4 w-4" />
+                    </Button>
+                </div>
             </div>
 
             <Tabs default-value="overview">
-                <TabsList>
-                    <TabsTrigger value="overview">{{ t('websites.tabs.overview') }}</TabsTrigger>
-                    <TabsTrigger value="technical">{{ t('websites.tabs.technical') }}</TabsTrigger>
-                    <TabsTrigger value="services">{{ t('websites.tabs.services') }} ({{ website.services.length }})</TabsTrigger>
-                    <TabsTrigger value="maintenance">{{ t('websites.tabs.maintenance') }} ({{ website.maintenance_logs.length }})</TabsTrigger>
-                    <TabsTrigger value="notes">{{ t('websites.tabs.notes') }} ({{ website.notes.length }})</TabsTrigger>
-                </TabsList>
+                <div class="overflow-x-auto">
+                    <TabsList class="justify-start">
+                        <TabsTrigger value="overview">{{ t('websites.tabs.overview') }}</TabsTrigger>
+                        <TabsTrigger value="technical">{{ t('websites.tabs.technical') }}</TabsTrigger>
+                        <TabsTrigger value="services">{{ t('websites.tabs.services') }} ({{ website.services.length }})</TabsTrigger>
+                        <TabsTrigger value="maintenance">{{ t('websites.tabs.maintenance') }} ({{ website.maintenance_logs.length }})</TabsTrigger>
+                        <TabsTrigger value="notes">{{ t('websites.tabs.notes') }} ({{ website.notes.length }})</TabsTrigger>
+                    </TabsList>
+                </div>
 
                 <TabsContent value="overview" class="grid gap-4 sm:grid-cols-2">
                     <Card>
@@ -207,5 +222,11 @@ const maintenanceDialogOpen = ref(false);
 
         <WebsiteFormDialog v-model:open="dialogOpen" :website="website" :clients="[website.client]" :locked-client-id="website.client.id" />
         <MaintenanceLogDialog v-model:open="maintenanceDialogOpen" :website-id="website.id" />
+        <DeleteConfirmDialog
+            v-model:open="deleteDialogOpen"
+            :item-label="website.name"
+            show-client-option
+            @confirm="confirmDelete"
+        />
     </AdminLayout>
 </template>

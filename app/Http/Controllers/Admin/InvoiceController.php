@@ -88,4 +88,13 @@ class InvoiceController extends Controller
 
         return back();
     }
+
+    public function destroy(Request $request, Invoice $invoice): RedirectResponse
+    {
+        $this->authorize('delete', $invoice);
+
+        $request->boolean('also_for_client') ? $invoice->forceDelete() : $invoice->delete();
+
+        return back();
+    }
 }

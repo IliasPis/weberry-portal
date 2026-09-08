@@ -29,7 +29,9 @@ class ServiceDetailSynchronizer
                 'nameservers' => $data['domain_nameservers'] ?? null,
                 'dns_provider' => $data['domain_dns_provider'] ?? null,
             ]),
-            'maintenance', 'woocommerce_maintenance' => $service->maintenanceDetail()->updateOrCreate([], [
+            'maintenance', 'woocommerce_maintenance',
+            'total_support_wordpress', 'total_support_woocommerce', 'total_support_b2b',
+            'total_support_custom_plugin' => $service->maintenanceDetail()->updateOrCreate([], [
                 'plan' => $data['maintenance_plan'] ?? null,
                 'included_hours' => $data['maintenance_included_hours'] ?? 0,
                 'used_hours' => $data['maintenance_used_hours'] ?? 0,

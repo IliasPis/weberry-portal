@@ -14,6 +14,7 @@ import { formatDate } from '@/lib/format';
 interface TicketRow {
     id: number;
     title: string;
+    category: { id: number; name: string } | null;
     priority: 'low' | 'normal' | 'high' | 'urgent';
     status: string;
     created_at: string;
@@ -47,13 +48,15 @@ watch(view, () => {
             </div>
 
             <Tabs v-model="view">
-                <TabsList>
-                    <TabsTrigger value="open">{{ t('tickets.views.open') }}</TabsTrigger>
-                    <TabsTrigger value="waiting">{{ t('ticketStatus.waiting_client') }}</TabsTrigger>
-                    <TabsTrigger value="completed">{{ t('tickets.views.completed') }}</TabsTrigger>
-                    <TabsTrigger value="closed">{{ t('ticketStatus.closed') }}</TabsTrigger>
-                    <TabsTrigger value="all">{{ t('tickets.views.all') }}</TabsTrigger>
-                </TabsList>
+                <div class="overflow-x-auto">
+                    <TabsList class="justify-start">
+                        <TabsTrigger value="open">{{ t('tickets.views.open') }}</TabsTrigger>
+                        <TabsTrigger value="waiting">{{ t('ticketStatus.waiting_client') }}</TabsTrigger>
+                        <TabsTrigger value="completed">{{ t('tickets.views.completed') }}</TabsTrigger>
+                        <TabsTrigger value="closed">{{ t('ticketStatus.closed') }}</TabsTrigger>
+                        <TabsTrigger value="all">{{ t('tickets.views.all') }}</TabsTrigger>
+                    </TabsList>
+                </div>
             </Tabs>
 
             <div v-if="tickets.data.length === 0" class="rounded-md border border-dashed p-8 text-center text-sm text-muted-foreground">
@@ -65,7 +68,8 @@ watch(view, () => {
                     <Card class="transition-colors hover:bg-accent/50">
                         <CardContent class="flex items-center justify-between p-4">
                             <div>
-                                <p class="font-medium">{{ ticket.title }}</p>
+                                <p class="font-medium">{{ ticket.category?.name ?? t('tickets.fields.category') }}</p>
+                                <p class="text-sm text-muted-foreground">{{ ticket.title }}</p>
                                 <p class="text-xs text-muted-foreground">
                                     <span v-if="ticket.website">{{ ticket.website.domain }} · </span>
                                     {{ formatDate(ticket.created_at, locale) }}

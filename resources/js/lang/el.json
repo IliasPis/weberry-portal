@@ -5,6 +5,9 @@
         "edit": "Επεξεργασία",
         "delete": "Διαγραφή",
         "archive": "Αρχειοθέτηση",
+        "deleteConfirmTitle": "Διαγραφή;",
+        "deleteConfirmBody": "Είστε σίγουροι ότι θέλετε να διαγράψετε «{item}»;",
+        "deleteAlsoForClient": "Διαγραφή και από την πλευρά του πελάτη (αλλιώς παραμένει ορατό εκεί)",
         "search": "Αναζήτηση",
         "loading": "Φόρτωση...",
         "close": "Κλείσιμο",
@@ -20,7 +23,20 @@
         "add": "Προσθήκη",
         "viewAll": "Προβολή όλων",
         "logout": "Αποσύνδεση",
-        "welcome": "Καλωσήρθες, {name}"
+        "welcome": "Καλωσήρθες, {name}",
+        "title": "Τίτλος",
+        "client": "Πελάτης",
+        "website": "Ιστότοπος",
+        "assignedTo": "Ανατέθηκε σε",
+        "createdBy": "Δημιουργήθηκε από",
+        "dueDate": "Ημ/νία λήξης",
+        "date": "Ημερομηνία",
+        "file": "Αρχείο",
+        "type": "Τύπος",
+        "description": "Περιγραφή",
+        "unassigned": "—",
+        "system": "Σύστημα",
+        "toggleTheme": "Εναλλαγή σκοτεινού θέματος"
     },
     "auth": {
         "email": "Email",
@@ -39,6 +55,37 @@
         "resendVerificationEmail": "Επαναποστολή email επιβεβαίωσης",
         "forgotPasswordText": "Ξεχάσατε τον κωδικό σας; Δεν πειράζει. Πείτε μας το email σας και θα σας στείλουμε έναν σύνδεσμο επαναφοράς κωδικού.",
         "confirmPasswordText": "Αυτή είναι μια ασφαλής περιοχή της εφαρμογής. Παρακαλούμε επιβεβαιώστε τον κωδικό σας πριν συνεχίσετε."
+    },
+    "profile": {
+        "infoTitle": "Στοιχεία Προφίλ",
+        "infoText": "Ενημερώστε τα στοιχεία προφίλ και το email του λογαριασμού σας.",
+        "name": "Όνομα",
+        "emailUnverified": "Η διεύθυνση email σας δεν έχει επιβεβαιωθεί.",
+        "resendVerification": "Κάντε κλικ εδώ για να στείλουμε ξανά το email επιβεβαίωσης.",
+        "verificationSent": "Ένας νέος σύνδεσμος επιβεβαίωσης στάλθηκε στη διεύθυνση email σας.",
+        "save": "Αποθήκευση",
+        "saved": "Αποθηκεύτηκε.",
+        "passwordTitle": "Αλλαγή Κωδικού",
+        "passwordText": "Χρησιμοποιήστε έναν μεγάλο, τυχαίο κωδικό για μεγαλύτερη ασφάλεια.",
+        "currentPassword": "Τρέχων κωδικός",
+        "newPassword": "Νέος κωδικός",
+        "deleteTitle": "Διαγραφή Λογαριασμού",
+        "deleteText": "Μόλις διαγραφεί ο λογαριασμός σας, όλοι οι πόροι και τα δεδομένα του θα διαγραφούν οριστικά. Πριν διαγράψετε τον λογαριασμό σας, κατεβάστε τυχόν δεδομένα ή πληροφορίες που θέλετε να κρατήσετε.",
+        "deleteButton": "Διαγραφή Λογαριασμού",
+        "deleteConfirmTitle": "Είστε σίγουροι ότι θέλετε να διαγράψετε τον λογαριασμό σας;",
+        "deleteConfirmText": "Μόλις διαγραφεί ο λογαριασμός σας, όλοι οι πόροι και τα δεδομένα του θα διαγραφούν οριστικά. Εισάγετε τον κωδικό σας για να επιβεβαιώσετε ότι θέλετε να διαγράψετε οριστικά τον λογαριασμό σας.",
+        "passwordPlaceholder": "Κωδικός πρόσβασης",
+        "notifTitle": "Ειδοποιήσεις Email",
+        "notifText": "Επίλεξε για ποια πράγματα θέλεις να λαμβάνεις email, εκτός από τις ειδοποιήσεις μέσα στην εφαρμογή.",
+        "notifSaved": "Οι προτιμήσεις αποθηκεύτηκαν."
+    },
+    "notificationCategories": {
+        "ticket": "Απαντήσεις σε αιτήματα",
+        "note": "Νέες σημειώσεις",
+        "task": "Νέες εργασίες",
+        "invoice": "Τιμολόγια",
+        "document": "Νέα έγγραφα",
+        "maintenance": "Αναφορές συντήρησης"
     },
     "priority": {
         "low": "Χαμηλή",
@@ -101,12 +148,21 @@
         "title": "Πελάτες",
         "newClient": "Νέος Πελάτης",
         "editClient": "Επεξεργασία Πελάτη",
+        "login": {
+            "createLogin": "Δημιουργία στοιχείων σύνδεσης για τον πελάτη",
+            "name": "Όνομα χρήστη",
+            "email": "Email σύνδεσης",
+            "password": "Κωδικός πρόσβασης",
+            "passwordHint": "Σημειώστε τον κωδικό — δεν θα εμφανιστεί ξανά. Δώστε τον στον πελάτη για να συνδεθεί."
+        },
         "searchPlaceholder": "Αναζήτηση εταιρείας, ΑΦΜ, email, τηλεφώνου, domain...",
         "allStatuses": "Όλες οι καταστάσεις",
         "allPriorities": "Όλες οι προτεραιότητες",
         "noResults": "Δεν βρέθηκαν πελάτες.",
         "archive": "Αρχειοθέτηση",
         "archiveConfirm": "Να αρχειοθετηθεί ο πελάτης \"{name}\";",
+        "newTagPlaceholder": "Νέα ετικέτα...",
+        "deleteConfirm": "Διαγραφή πελάτη \"{name}\"; Ο πελάτης και όλοι οι χρήστες του θα χάσουν αμέσως κάθε πρόσβαση. Οι υπηρεσίες, τα τιμολόγια και το ιστορικό ΔΕΝ διαγράφονται.",
         "columns": {
             "company": "Εταιρεία",
             "status": "Κατάσταση",
@@ -135,6 +191,19 @@
             "viewDocuments": "Έγγραφα",
             "createRequests": "Δημιουργία αιτημάτων",
             "manageAccount": "Διαχείριση λογαριασμού"
+        },
+        "contacts": {
+            "add": "Προσθήκη επαφής",
+            "resetPassword": "Αλλαγή κωδικού",
+            "title": "Ρόλος",
+            "primary": "Κύρια επαφή",
+            "titles": {
+                "owner": "Ιδιοκτήτης",
+                "accountant": "Λογιστής",
+                "marketing": "Marketing",
+                "employee": "Υπάλληλος",
+                "other": "Άλλο"
+            }
         },
         "fields": {
             "companyName": "Επωνυμία",
@@ -227,7 +296,35 @@
         }
     },
     "tasksAdmin": {
-        "visibleToClient": "Ορατή στον πελάτη"
+        "visibleToClient": "Ορατή στον πελάτη",
+        "viewOpen": "Ανοιχτές",
+        "viewMine": "Δικές μου",
+        "viewAll": "Όλες"
+    },
+    "remindersAdmin": {
+        "viewUpcoming": "Προσεχείς",
+        "viewCompleted": "Ολοκληρωμένες",
+        "viewAll": "Όλες"
+    },
+    "invoicesAdmin": {
+        "number": "Αρ. Τιμολογίου",
+        "issueDate": "Ημ/νία έκδοσης",
+        "subtotal": "Καθαρή αξία",
+        "vat": "ΦΠΑ",
+        "total": "Σύνολο",
+        "pdf": "PDF"
+    },
+    "documentsAdmin": {
+        "visibleToClient": "Ορατό στον πελάτη"
+    },
+    "settingsAdmin": {
+        "serviceTypesText": "Οι κατηγορίες αιτημάτων που βλέπει ο πελάτης όταν επιλέγει μια υπηρεσία στη φόρμα αιτήματος. Η επιλογή \"Δημιουργεί εργασία\" σημαίνει ότι το αίτημα θα ανοίγει αυτόματα και μια αντίστοιχη εργασία.",
+        "servicesUsingType": "υπηρεσίες"
+    },
+    "ticketCategoriesAdmin": {
+        "createsTask": "Δημιουργεί εργασία",
+        "createsTaskBadge": "Εργασία",
+        "newCategoryPlaceholder": "Νέα κατηγορία..."
     },
     "maintenanceForm": {
         "newLog": "Νέα καταχώρηση συντήρησης",
@@ -284,6 +381,8 @@
         "domainDetails": "Στοιχεία Domain",
         "maintenanceDetails": "Στοιχεία Συντήρησης",
         "licenseDetails": "Στοιχεία Άδειας",
+        "ticketCategoriesTitle": "Κατηγορίες Αιτημάτων",
+        "ticketCategoriesHint": "Οι κατηγορίες που θα βλέπει ο πελάτης όταν επιλέγει «{type}» στη φόρμα αιτήματος.",
         "hosting": {
             "package": "Πακέτο",
             "server": "Server",
@@ -400,6 +499,56 @@
         "completed": "Ολοκληρώθηκε",
         "closed": "Κλειστό",
         "cancelled": "Ακυρώθηκε"
+    },
+    "taskStatus": {
+        "todo": "Προς εκτέλεση",
+        "in_progress": "Σε εξέλιξη",
+        "blocked": "Μπλοκαρισμένη",
+        "waiting": "Σε αναμονή",
+        "completed": "Ολοκληρώθηκε",
+        "cancelled": "Ακυρώθηκε"
+    },
+    "invoiceStatus": {
+        "draft": "Πρόχειρο",
+        "sent": "Στάλθηκε",
+        "paid": "Πληρώθηκε",
+        "unpaid": "Απλήρωτο",
+        "overdue": "Ληξιπρόθεσμο",
+        "cancelled": "Ακυρώθηκε"
+    },
+    "reminderStatus": {
+        "upcoming": "Προσεχής",
+        "completed": "Ολοκληρώθηκε",
+        "dismissed": "Απορρίφθηκε"
+    },
+    "documentType": {
+        "invoice": "Τιμολόγιο",
+        "contract": "Σύμβαση",
+        "proposal": "Πρόταση",
+        "quote": "Προσφορά",
+        "technical_report": "Τεχνική Αναφορά",
+        "credentials_document": "Έγγραφο Διαπιστευτηρίων",
+        "hosting_document": "Έγγραφο Φιλοξενίας",
+        "domain_document": "Έγγραφο Domain",
+        "maintenance_report": "Αναφορά Συντήρησης",
+        "agreement": "Συμφωνία",
+        "other": "Άλλο"
+    },
+    "dashboard": {
+        "activeServices": "Ενεργές Υπηρεσίες",
+        "openRequests": "Ανοιχτά Αιτήματα",
+        "websites": "Ιστότοποι",
+        "outstandingInvoices": "Εκκρεμή Τιμολόγια",
+        "nextRenewal": "Επόμενη Ανανέωση",
+        "recentActivity": "Πρόσφατη Δραστηριότητα",
+        "noActivity": "Δεν υπάρχει πρόσφατη δραστηριότητα.",
+        "activeClients": "Ενεργοί Πελάτες",
+        "openTickets": "Ανοιχτά Αιτήματα",
+        "tasksDueToday": "Εργασίες Σήμερα",
+        "overdueTasks": "Εκπρόθεσμες Εργασίες",
+        "upcomingRenewals": "Επερχόμενες Ανανεώσεις (30 ημ.)",
+        "openTasks": "Ανοιχτές Εργασίες",
+        "openRequests": "Ανοιχτά Αιτήματα"
     },
     "tickets": {
         "adminTitle": "Αιτήματα",

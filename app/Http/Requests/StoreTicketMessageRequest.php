@@ -21,7 +21,7 @@ class StoreTicketMessageRequest extends FormRequest
             // Only ever honored server-side for admin-side users who also
             // hold tickets.internalNotes.view - see TicketMessageController.
             'is_internal' => ['boolean'],
-            'attachments.*' => ['file', 'max:10240', 'mimes:jpg,jpeg,png,gif,webp,pdf,doc,docx,xls,xlsx,zip'],
+            'attachments.*' => ['file', 'max:10240', 'mimes:jpg,jpeg,png,gif,webp,heic,heif,pdf,doc,docx,xls,xlsx,csv,txt,zip,mp4,mov'],
         ];
     }
 }

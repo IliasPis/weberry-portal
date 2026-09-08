@@ -28,9 +28,9 @@ class WebsiteController extends Controller
             ->when($request->filled('search'), function ($query) use ($request) {
                 $term = '%'.$request->string('search').'%';
                 $query->where(function ($query) use ($term) {
-                    $query->where('name', 'ilike', $term)
-                        ->orWhere('domain', 'ilike', $term)
-                        ->orWhereHas('client', fn ($q) => $q->where('company_name', 'ilike', $term));
+                    $query->whereLike('name', $term)
+                        ->orWhereLike('domain', $term)
+                        ->orWhereHas('client', fn ($q) => $q->whereLike('company_name', $term));
                 });
             })
             ->when($request->filled('status'), fn ($query) => $query->where('status', $request->string('status')))
@@ -73,5 +73,19 @@ class WebsiteController extends Controller
         $website->update($request->validated());
 
         return back();
+    }
+
+    /**
+     * "also_for_client" false (default) soft-deletes: gone from the admin's
+     * own lists/pages, but the client-facing queries include trashed rows so
+     * it stays visible to them. true force-deletes: gone everywhere.
+     */
+    public function destroy(Request $request, Website $website): RedirectResponse
+    {
+        $this->authorize('delete', $website);
+
+        $request->boolean('also_for_client') ? $website->forceDelete() : $website->delete();
+
+        return redirect()->route('admin.websites.index');
     }
 }

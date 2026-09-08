@@ -42,16 +42,16 @@ const { t, locale } = useI18n();
                     <TableHeader>
                         <TableRow>
                             <TableHead>{{ t('common.status') }}</TableHead>
-                            <TableHead>Title</TableHead>
-                            <TableHead>Website</TableHead>
+                            <TableHead>{{ t('common.title') }}</TableHead>
+                            <TableHead>{{ t('common.website') }}</TableHead>
                             <TableHead>{{ t('common.priority') }}</TableHead>
-                            <TableHead>Due</TableHead>
+                            <TableHead>{{ t('common.dueDate') }}</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         <TableEmpty v-if="tasks.length === 0" :colspan="5">—</TableEmpty>
                         <TableRow v-for="task in tasks" :key="task.id">
-                            <TableCell><Badge variant="outline">{{ task.status }}</Badge></TableCell>
+                            <TableCell><Badge variant="outline">{{ t(`taskStatus.${task.status}`) }}</Badge></TableCell>
                             <TableCell>
                                 <p class="font-medium">{{ task.title }}</p>
                                 <p v-if="task.description" class="text-sm text-muted-foreground">{{ task.description }}</p>

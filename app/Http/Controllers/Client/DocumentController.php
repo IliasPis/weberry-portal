@@ -15,6 +15,7 @@ class DocumentController extends Controller
         $this->authorize('viewAny', Document::class);
 
         $documents = Document::query()
+            ->withTrashed()
             ->where('client_id', $request->user()->client_id)
             ->where('visible_to_client', true)
             ->with(['website:id,domain', 'file'])

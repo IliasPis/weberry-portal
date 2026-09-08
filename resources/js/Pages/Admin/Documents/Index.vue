@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { Head, useForm } from '@inertiajs/vue3';
+import { Head, router, useForm } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
+import DeleteConfirmDialog from '@/Components/admin/DeleteConfirmDialog.vue';
 import { Button } from '@/Components/ui/button';
 import {
     Dialog,
@@ -32,7 +33,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/Components/ui/table';
-import { Download, Plus } from '@lucide/vue';
+import { Download, Plus, Trash2 } from '@lucide/vue';
 import { formatDate } from '@/lib/format';
 
 interface DocumentRow {
@@ -87,6 +88,23 @@ function submit() {
         },
     });
 }
+
+const deleteDialogOpen = ref(false);
+const pendingDelete = ref<DocumentRow | null>(null);
+
+function openDelete(document: DocumentRow) {
+    pendingDelete.value = document;
+    deleteDialogOpen.value = true;
+}
+
+function confirmDelete(alsoForClient: boolean) {
+    if (!pendingDelete.value) return;
+    router.delete(route('admin.documents.destroy', pendingDelete.value.id), {
+        data: { also_for_client: alsoForClient },
+        preserveScroll: true,
+        onSuccess: () => (deleteDialogOpen.value = false),
+    });
+}
 </script>
 
 <template>
@@ -103,18 +121,18 @@ function submit() {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Type</TableHead>
-                            <TableHead>Client</TableHead>
-                            <TableHead>Description</TableHead>
-                            <TableHead>Client visible</TableHead>
-                            <TableHead>Date</TableHead>
+                            <TableHead>{{ t('common.type') }}</TableHead>
+                            <TableHead>{{ t('common.client') }}</TableHead>
+                            <TableHead>{{ t('common.description') }}</TableHead>
+                            <TableHead>{{ t('documentsAdmin.visibleToClient') }}</TableHead>
+                            <TableHead>{{ t('common.date') }}</TableHead>
                             <TableHead class="text-right" />
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         <TableEmpty v-if="documents.data.length === 0" :colspan="6">—</TableEmpty>
                         <TableRow v-for="document in documents.data" :key="document.id">
-                            <TableCell class="capitalize">{{ document.type.replace('_', ' ') }}</TableCell>
+                            <TableCell>{{ t(`documentType.${document.type}`) }}</TableCell>
                             <TableCell>{{ document.client.company_name }}</TableCell>
                             <TableCell class="text-sm text-muted-foreground">{{ document.description }}</TableCell>
                             <TableCell>
@@ -124,9 +142,14 @@ function submit() {
                             </TableCell>
                             <TableCell class="text-sm text-muted-foreground">{{ formatDate(document.created_at, locale) }}</TableCell>
                             <TableCell class="text-right">
-                                <a :href="route('files.download', document.file.id)">
-                                    <Button variant="ghost" size="sm"><Download class="h-4 w-4" /></Button>
-                                </a>
+                                <div class="flex justify-end gap-1">
+                                    <a :href="route('files.download', document.file.id)">
+                                        <Button variant="ghost" size="sm"><Download class="h-4 w-4" /></Button>
+                                    </a>
+                                    <Button variant="ghost" size="sm" class="text-destructive hover:text-destructive" @click="openDelete(document)">
+                                        <Trash2 class="h-4 w-4" />
+                                    </Button>
+                                </div>
                             </TableCell>
                         </TableRow>
                     </TableBody>
@@ -148,27 +171,27 @@ function submit() {
                         </Select>
                     </div>
                     <div>
-                        <Label>Type</Label>
+                        <Label>{{ t('common.type') }}</Label>
                         <Select v-model="form.type">
                             <SelectTrigger class="w-full"><SelectValue /></SelectTrigger>
                             <SelectContent>
-                                <SelectItem v-for="type in documentTypes" :key="type" :value="type" class="capitalize">
-                                    {{ type.replace('_', ' ') }}
+                                <SelectItem v-for="type in documentTypes" :key="type" :value="type">
+                                    {{ t(`documentType.${type}`) }}
                                 </SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
                     <div>
-                        <Label>{{ t('services.fields.notesClient') }}</Label>
+                        <Label>{{ t('common.description') }}</Label>
                         <Textarea v-model="form.description" rows="2" />
                     </div>
                     <div>
-                        <Label>File</Label>
+                        <Label>{{ t('common.file') }}</Label>
                         <input ref="fileInput" type="file" class="block w-full text-sm" @change="onFileSelected" />
                     </div>
                     <div class="flex items-center gap-2">
                         <Checkbox id="visible_to_client" v-model="form.visible_to_client" />
-                        <Label for="visible_to_client" class="!mt-0">Visible to client</Label>
+                        <Label for="visible_to_client" class="!mt-0">{{ t('documentsAdmin.visibleToClient') }}</Label>
                     </div>
                     <DialogFooter>
                         <Button type="button" variant="outline" @click="dialogOpen = false">{{ t('common.cancel') }}</Button>
@@ -177,5 +200,12 @@ function submit() {
                 </form>
             </DialogContent>
         </Dialog>
+
+        <DeleteConfirmDialog
+            v-model:open="deleteDialogOpen"
+            :item-label="pendingDelete?.description ?? pendingDelete?.file.original_filename ?? ''"
+            :show-client-option="pendingDelete?.visible_to_client ?? false"
+            @confirm="confirmDelete"
+        />
     </AdminLayout>
 </template>

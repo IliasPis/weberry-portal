@@ -56,4 +56,17 @@ class ReminderController extends Controller
 
         return back();
     }
+
+    /**
+     * Admin reminders are never client-facing (unlike tickets/services/etc.),
+     * so there's no "also for client" distinction here - a plain delete.
+     */
+    public function destroy(Reminder $reminder): RedirectResponse
+    {
+        $this->authorize('delete', $reminder);
+
+        $reminder->delete();
+
+        return back();
+    }
 }

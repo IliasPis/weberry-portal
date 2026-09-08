@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, router, useForm } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import TicketStatusBadge from '@/Components/shared/TicketStatusBadge.vue';
 import PriorityBadge from '@/Components/shared/PriorityBadge.vue';
 import TicketMessageBubble from '@/Components/shared/TicketMessageBubble.vue';
+import DeleteConfirmDialog from '@/Components/admin/DeleteConfirmDialog.vue';
 import { Button } from '@/Components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/Components/ui/card';
 import { Textarea } from '@/Components/ui/textarea';
@@ -18,7 +19,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/Components/ui/select';
-import { ArrowLeft, Paperclip } from '@lucide/vue';
+import { ArrowLeft, Paperclip, Trash2 } from '@lucide/vue';
 import { formatDate } from '@/lib/format';
 import { TICKET_STATUSES } from '@/lib/ticketOptions';
 
@@ -35,7 +36,7 @@ interface TicketDetail {
     id: number;
     title: string;
     description: string | null;
-    category: string;
+    category: { id: number; name: string } | null;
     priority: 'low' | 'normal' | 'high' | 'urgent';
     status: string;
     url: string | null;
@@ -92,6 +93,14 @@ function submitReply() {
         },
     });
 }
+
+const deleteDialogOpen = ref(false);
+
+function confirmDelete(alsoForClient: boolean) {
+    router.delete(route('admin.tickets.destroy', props.ticket.id), {
+        data: { also_for_client: alsoForClient },
+    });
+}
 </script>
 
 <template>
@@ -100,24 +109,29 @@ function submitReply() {
     <AdminLayout>
         <div class="grid gap-6 lg:grid-cols-[1fr_320px]">
             <div class="space-y-4">
-                <div class="flex items-center gap-3">
-                    <Link :href="route('admin.tickets.index')">
-                        <Button variant="ghost" size="sm"><ArrowLeft class="h-4 w-4" /></Button>
-                    </Link>
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <h1 class="text-xl font-semibold tracking-tight">{{ ticket.title }}</h1>
-                            <TicketStatusBadge :status="metaForm.status" />
-                            <PriorityBadge :priority="currentPriority" />
-                        </div>
-                        <div class="flex items-center gap-2 text-sm text-muted-foreground">
-                            <Link :href="route('admin.clients.show', ticket.client.id)" class="hover:underline">
-                                {{ ticket.client.company_name }}
-                            </Link>
-                            <span v-if="ticket.website">· {{ ticket.website.domain }}</span>
-                            <span>· {{ t(`ticketCategory.${ticket.category}`) }}</span>
+                <div class="flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-3">
+                        <Link :href="route('admin.tickets.index')">
+                            <Button variant="ghost" size="sm"><ArrowLeft class="h-4 w-4" /></Button>
+                        </Link>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h1 class="text-xl font-semibold tracking-tight">{{ ticket.category?.name ?? t('tickets.fields.category') }}</h1>
+                                <TicketStatusBadge :status="metaForm.status" />
+                                <PriorityBadge :priority="currentPriority" />
+                            </div>
+                            <p class="text-sm font-medium">{{ ticket.title }}</p>
+                            <div class="flex items-center gap-2 text-sm text-muted-foreground">
+                                <Link :href="route('admin.clients.show', ticket.client.id)" class="hover:underline">
+                                    {{ ticket.client.company_name }}
+                                </Link>
+                                <span v-if="ticket.website">· {{ ticket.website.domain }}</span>
+                            </div>
                         </div>
                     </div>
+                    <Button variant="outline" size="icon" class="text-destructive hover:text-destructive" :title="t('common.delete')" @click="deleteDialogOpen = true">
+                        <Trash2 class="h-4 w-4" />
+                    </Button>
                 </div>
 
                 <Card>
@@ -137,6 +151,8 @@ function submitReply() {
                             :placeholder="t('tickets.writeReply')"
                             rows="4"
                         />
+                        <p v-if="replyForm.errors.body" class="text-sm text-destructive">{{ replyForm.errors.body }}</p>
+                        <p v-if="replyForm.errors.attachments" class="text-sm text-destructive">{{ replyForm.errors.attachments }}</p>
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-4">
                                 <label class="flex cursor-pointer items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
@@ -205,5 +221,12 @@ function submitReply() {
                 </Card>
             </div>
         </div>
+
+        <DeleteConfirmDialog
+            v-model:open="deleteDialogOpen"
+            :item-label="ticket.title"
+            show-client-option
+            @confirm="confirmDelete"
+        />
     </AdminLayout>
 </template>

@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[Fillable([
-    'client_id', 'website_id', 'service_id', 'category', 'priority', 'status', 'title', 'description',
+    'client_id', 'website_id', 'service_id', 'ticket_category_id', 'priority', 'status', 'title', 'description',
     'url', 'created_by_user_id', 'assigned_to_user_id', 'first_response_at', 'resolved_at', 'closed_at',
 ])]
 class Ticket extends Model
@@ -28,7 +28,7 @@ class Ticket extends Model
 
     public function client(): BelongsTo
     {
-        return $this->belongsTo(Client::class);
+        return $this->belongsTo(Client::class)->withTrashed();
     }
 
     public function website(): BelongsTo
@@ -39,6 +39,11 @@ class Ticket extends Model
     public function service(): BelongsTo
     {
         return $this->belongsTo(Service::class);
+    }
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(TicketCategory::class, 'ticket_category_id');
     }
 
     public function createdBy(): BelongsTo

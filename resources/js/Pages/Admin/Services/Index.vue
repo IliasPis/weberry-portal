@@ -4,11 +4,12 @@ import { Head, Link, router } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import ServiceFormDialog, { type ServiceRecord } from '@/Components/admin/ServiceFormDialog.vue';
+import DeleteConfirmDialog from '@/Components/admin/DeleteConfirmDialog.vue';
 import ExpirationBadge from '@/Components/shared/ExpirationBadge.vue';
 import { Badge } from '@/Components/ui/badge';
 import { Button } from '@/Components/ui/button';
 import { Input } from '@/Components/ui/input';
-import { Plus } from '@lucide/vue';
+import { Plus, Trash2 } from '@lucide/vue';
 import {
     Select,
     SelectContent,
@@ -74,6 +75,23 @@ function openCreate() {
 function openEdit(service: ServiceRow) {
     editingService.value = service;
     dialogOpen.value = true;
+}
+
+const deleteDialogOpen = ref(false);
+const pendingDelete = ref<ServiceRow | null>(null);
+
+function openDelete(service: ServiceRow) {
+    pendingDelete.value = service;
+    deleteDialogOpen.value = true;
+}
+
+function confirmDelete(alsoForClient: boolean) {
+    if (!pendingDelete.value) return;
+    router.delete(route('admin.services.destroy', pendingDelete.value.id), {
+        data: { also_for_client: alsoForClient },
+        preserveScroll: true,
+        onSuccess: () => (deleteDialogOpen.value = false),
+    });
 }
 </script>
 
@@ -142,7 +160,12 @@ function openEdit(service: ServiceRow) {
                             <TableCell><ExpirationBadge :date="service.expiration_date" /></TableCell>
                             <TableCell><Badge variant="outline">{{ t(`serviceStatus.${service.status}`) }}</Badge></TableCell>
                             <TableCell class="text-right">
-                                <Button variant="ghost" size="sm" @click="openEdit(service)">{{ t('common.edit') }}</Button>
+                                <div class="flex justify-end gap-1">
+                                    <Button variant="ghost" size="sm" @click="openEdit(service)">{{ t('common.edit') }}</Button>
+                                    <Button variant="ghost" size="sm" class="text-destructive hover:text-destructive" @click="openDelete(service)">
+                                        <Trash2 class="h-4 w-4" />
+                                    </Button>
+                                </div>
                             </TableCell>
                         </TableRow>
                     </TableBody>
@@ -174,6 +197,12 @@ function openEdit(service: ServiceRow) {
             :clients="clients"
             :websites="websites"
             :service-types="serviceTypes"
+        />
+        <DeleteConfirmDialog
+            v-model:open="deleteDialogOpen"
+            :item-label="pendingDelete?.name ?? ''"
+            show-client-option
+            @confirm="confirmDelete"
         />
     </AdminLayout>
 </template>

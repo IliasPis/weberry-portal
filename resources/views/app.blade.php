@@ -11,6 +11,15 @@
         <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
         <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
 
+        <!-- Apply the stored/preferred appearance before first paint to avoid a flash of the wrong theme -->
+        <script>
+            (function () {
+                var stored = localStorage.getItem('weberry-appearance');
+                var dark = stored ? stored === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (dark) document.documentElement.classList.add('dark');
+            })();
+        </script>
+
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />

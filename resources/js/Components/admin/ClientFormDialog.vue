@@ -11,6 +11,7 @@ import {
     DialogTitle,
 } from '@/Components/ui/dialog';
 import { Button } from '@/Components/ui/button';
+import { Checkbox } from '@/Components/ui/checkbox';
 import { Input } from '@/Components/ui/input';
 import { Label } from '@/Components/ui/label';
 import { Textarea } from '@/Components/ui/textarea';
@@ -21,6 +22,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/Components/ui/select';
+import { RefreshCw } from '@lucide/vue';
 
 /**
  * The wire shape from the backend (Eloquent nulls for anything unset).
@@ -46,7 +48,12 @@ export interface ClientRecord {
 
 /** The form's own shape - shadcn Input/Textarea don't accept null, so every
  * optional field is a plain string here and '' stands in for "unset". */
-type ClientFormValues = { [K in keyof Omit<ClientRecord, 'id'>]: string };
+type ClientFormValues = { [K in keyof Omit<ClientRecord, 'id'>]: string } & {
+    create_login: boolean;
+    login_name: string;
+    login_email: string;
+    login_password: string;
+};
 
 const props = defineProps<{
     open: boolean;
@@ -77,11 +84,16 @@ const emptyForm = (): ClientFormValues => ({
     next_action: '',
     internal_notes: '',
     client_visible_notes: '',
+    create_login: false,
+    login_name: '',
+    login_email: '',
+    login_password: '',
 });
 
 function toFormValues(client: ClientRecord): ClientFormValues {
     const values = emptyForm();
-    (Object.keys(values) as (keyof ClientFormValues)[]).forEach((key) => {
+    (Object.keys(client) as (keyof ClientRecord)[]).forEach((key) => {
+        if (key === 'id') return;
         values[key] = client[key] ?? '';
     });
 
@@ -89,6 +101,15 @@ function toFormValues(client: ClientRecord): ClientFormValues {
 }
 
 const form = useForm<ClientFormValues>(emptyForm());
+
+function generatePassword() {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
+    let value = '';
+    for (let i = 0; i < 12; i++) {
+        value += chars[Math.floor(Math.random() * chars.length)];
+    }
+    form.login_password = value;
+}
 
 watch(
     () => [props.open, props.client],
@@ -99,6 +120,16 @@ watch(
         form.reset();
     },
     { immediate: true },
+);
+
+watch(
+    () => form.create_login,
+    (enabled: boolean) => {
+        if (!enabled) return;
+        if (!form.login_name) form.login_name = form.contact_name || form.company_name;
+        if (!form.login_email) form.login_email = form.email;
+        if (!form.login_password) generatePassword();
+    },
 );
 
 function submit() {
@@ -116,13 +147,13 @@ function submit() {
 
 <template>
     <Dialog :open="open" @update:open="(v) => emit('update:open', v)">
-        <DialogContent class="max-h-[90vh] max-w-2xl overflow-y-auto">
+        <DialogContent class="max-h-[90vh] max-w-2xl overflow-y-auto xl:max-w-4xl">
             <DialogHeader>
                 <DialogTitle>{{ isEditing ? t('clients.editClient') : t('clients.newClient') }}</DialogTitle>
                 <DialogDescription />
             </DialogHeader>
 
-            <form class="grid grid-cols-2 gap-4" @submit.prevent="submit">
+            <form class="grid grid-cols-1 gap-x-5 gap-y-5 sm:grid-cols-2" @submit.prevent="submit">
                 <div class="col-span-2">
                     <Label for="company_name">{{ t('clients.fields.companyName') }}</Label>
                     <Input id="company_name" v-model="form.company_name" required />
@@ -206,6 +237,36 @@ function submit() {
                 <div class="col-span-2">
                     <Label for="client_visible_notes">{{ t('clients.fields.clientVisibleNotes') }}</Label>
                     <Textarea id="client_visible_notes" v-model="form.client_visible_notes" rows="2" />
+                </div>
+
+                <div v-if="!isEditing" class="col-span-2 space-y-3 rounded-md border p-3">
+                    <div class="flex items-center gap-2">
+                        <Checkbox id="create_login" v-model="form.create_login" />
+                        <Label for="create_login" class="!mt-0">{{ t('clients.login.createLogin') }}</Label>
+                    </div>
+                    <div v-if="form.create_login" class="grid grid-cols-2 gap-3">
+                        <div class="col-span-2">
+                            <Label for="login_name">{{ t('clients.login.name') }}</Label>
+                            <Input id="login_name" v-model="form.login_name" />
+                            <p v-if="form.errors.login_name" class="mt-1 text-sm text-destructive">{{ form.errors.login_name }}</p>
+                        </div>
+                        <div class="col-span-2">
+                            <Label for="login_email">{{ t('clients.login.email') }}</Label>
+                            <Input id="login_email" type="email" v-model="form.login_email" />
+                            <p v-if="form.errors.login_email" class="mt-1 text-sm text-destructive">{{ form.errors.login_email }}</p>
+                        </div>
+                        <div class="col-span-2">
+                            <Label for="login_password">{{ t('clients.login.password') }}</Label>
+                            <div class="flex gap-2">
+                                <Input id="login_password" v-model="form.login_password" class="font-mono" />
+                                <Button type="button" variant="outline" size="sm" @click="generatePassword">
+                                    <RefreshCw class="h-4 w-4" />
+                                </Button>
+                            </div>
+                            <p class="mt-1 text-xs text-muted-foreground">{{ t('clients.login.passwordHint') }}</p>
+                            <p v-if="form.errors.login_password" class="mt-1 text-sm text-destructive">{{ form.errors.login_password }}</p>
+                        </div>
+                    </div>
                 </div>
 
                 <DialogFooter class="col-span-2">

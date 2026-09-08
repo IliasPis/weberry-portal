@@ -23,7 +23,7 @@ interface Message {
 interface TicketDetail {
     id: number;
     title: string;
-    category: string;
+    category: { id: number; name: string } | null;
     priority: 'low' | 'normal' | 'high' | 'urgent';
     status: string;
     website: { id: number; domain: string } | null;
@@ -64,13 +64,13 @@ function submitReply() {
                 </Link>
                 <div>
                     <div class="flex items-center gap-2">
-                        <h1 class="text-xl font-semibold tracking-tight">{{ ticket.title }}</h1>
+                        <h1 class="text-xl font-semibold tracking-tight">{{ ticket.category?.name ?? t('tickets.fields.category') }}</h1>
                         <TicketStatusBadge :status="ticket.status" />
                         <PriorityBadge :priority="ticket.priority" />
                     </div>
                     <p class="text-sm text-muted-foreground">
-                        <span v-if="ticket.website">{{ ticket.website.domain }} · </span>
-                        {{ t(`ticketCategory.${ticket.category}`) }}
+                        {{ ticket.title }}
+                        <span v-if="ticket.website"> · {{ ticket.website.domain }}</span>
                     </p>
                 </div>
             </div>
@@ -88,6 +88,8 @@ function submitReply() {
             <Card>
                 <CardContent class="space-y-3 p-4">
                     <Textarea v-model="replyForm.body" :placeholder="t('tickets.writeReply')" rows="4" />
+                    <p v-if="replyForm.errors.body" class="text-sm text-destructive">{{ replyForm.errors.body }}</p>
+                    <p v-if="replyForm.errors.attachments" class="text-sm text-destructive">{{ replyForm.errors.attachments }}</p>
                     <div class="flex items-center justify-between">
                         <label class="flex cursor-pointer items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
                             <Paperclip class="h-4 w-4" />

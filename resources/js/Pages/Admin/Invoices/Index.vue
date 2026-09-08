@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
-import { Head, useForm } from '@inertiajs/vue3';
+import { Head, router, useForm } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
+import DeleteConfirmDialog from '@/Components/admin/DeleteConfirmDialog.vue';
 import { Button } from '@/Components/ui/button';
 import {
     Dialog,
@@ -30,7 +31,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/Components/ui/table';
-import { Download, Plus } from '@lucide/vue';
+import { Download, Plus, Trash2 } from '@lucide/vue';
 import { formatDate } from '@/lib/format';
 
 interface InvoiceRow {
@@ -130,6 +131,23 @@ const statusStyles: Record<string, string> = {
     draft: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300',
     cancelled: 'bg-slate-100 text-slate-400 dark:bg-slate-800 dark:text-slate-500',
 };
+
+const deleteDialogOpen = ref(false);
+const pendingDelete = ref<InvoiceRow | null>(null);
+
+function openDelete(invoice: InvoiceRow) {
+    pendingDelete.value = invoice;
+    deleteDialogOpen.value = true;
+}
+
+function confirmDelete(alsoForClient: boolean) {
+    if (!pendingDelete.value) return;
+    router.delete(route('admin.invoices.destroy', pendingDelete.value.id), {
+        data: { also_for_client: alsoForClient },
+        preserveScroll: true,
+        onSuccess: () => (deleteDialogOpen.value = false),
+    });
+}
 </script>
 
 <template>
@@ -147,11 +165,11 @@ const statusStyles: Record<string, string> = {
                     <TableHeader>
                         <TableRow>
                             <TableHead>#</TableHead>
-                            <TableHead>Client</TableHead>
-                            <TableHead>Issue date</TableHead>
-                            <TableHead>Due date</TableHead>
-                            <TableHead class="text-right">Total</TableHead>
-                            <TableHead>Status</TableHead>
+                            <TableHead>{{ t('common.client') }}</TableHead>
+                            <TableHead>{{ t('invoicesAdmin.issueDate') }}</TableHead>
+                            <TableHead>{{ t('common.dueDate') }}</TableHead>
+                            <TableHead class="text-right">{{ t('invoicesAdmin.total') }}</TableHead>
+                            <TableHead>{{ t('common.status') }}</TableHead>
                             <TableHead class="text-right">{{ t('common.actions') }}</TableHead>
                         </TableRow>
                     </TableHeader>
@@ -165,11 +183,16 @@ const statusStyles: Record<string, string> = {
                             <TableCell class="text-right">€{{ invoice.total }}</TableCell>
                             <TableCell>
                                 <Badge variant="outline" :class="[statusStyles[invoice.status], 'border-transparent']">
-                                    {{ invoice.status }}
+                                    {{ t(`invoiceStatus.${invoice.status}`) }}
                                 </Badge>
                             </TableCell>
                             <TableCell class="text-right">
-                                <Button variant="ghost" size="sm" @click="openEdit(invoice)">{{ t('common.edit') }}</Button>
+                                <div class="flex justify-end gap-1">
+                                    <Button variant="ghost" size="sm" @click="openEdit(invoice)">{{ t('common.edit') }}</Button>
+                                    <Button variant="ghost" size="sm" class="text-destructive hover:text-destructive" @click="openDelete(invoice)">
+                                        <Trash2 class="h-4 w-4" />
+                                    </Button>
+                                </div>
                             </TableCell>
                         </TableRow>
                     </TableBody>
@@ -191,41 +214,41 @@ const statusStyles: Record<string, string> = {
                         </Select>
                     </div>
                     <div>
-                        <Label>Invoice #</Label>
+                        <Label>{{ t('invoicesAdmin.number') }}</Label>
                         <Input v-model="form.invoice_number" />
                         <p v-if="form.errors.invoice_number" class="mt-1 text-sm text-destructive">{{ form.errors.invoice_number }}</p>
                     </div>
                     <div>
-                        <Label>{{ t('services.fields.status') }}</Label>
+                        <Label>{{ t('common.status') }}</Label>
                         <Select v-model="form.status">
                             <SelectTrigger class="w-full"><SelectValue /></SelectTrigger>
                             <SelectContent>
-                                <SelectItem v-for="s in statuses" :key="s" :value="s">{{ s }}</SelectItem>
+                                <SelectItem v-for="s in statuses" :key="s" :value="s">{{ t(`invoiceStatus.${s}`) }}</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
                     <div>
-                        <Label>Issue date</Label>
+                        <Label>{{ t('invoicesAdmin.issueDate') }}</Label>
                         <Input v-model="form.issue_date" type="date" />
                     </div>
                     <div>
-                        <Label>Due date</Label>
+                        <Label>{{ t('common.dueDate') }}</Label>
                         <Input v-model="form.due_date" type="date" />
                     </div>
                     <div>
-                        <Label>Subtotal</Label>
+                        <Label>{{ t('invoicesAdmin.subtotal') }}</Label>
                         <Input v-model="form.subtotal" type="number" step="0.01" />
                     </div>
                     <div>
-                        <Label>VAT</Label>
+                        <Label>{{ t('invoicesAdmin.vat') }}</Label>
                         <Input v-model="form.vat_amount" type="number" step="0.01" />
                     </div>
                     <div class="col-span-2">
-                        <Label>Total</Label>
+                        <Label>{{ t('invoicesAdmin.total') }}</Label>
                         <Input v-model="form.total" type="number" step="0.01" readonly />
                     </div>
                     <div class="col-span-2">
-                        <Label>PDF</Label>
+                        <Label>{{ t('invoicesAdmin.pdf') }}</Label>
                         <input ref="fileInput" type="file" accept="application/pdf" class="block w-full text-sm" @change="onPdfSelected" />
                     </div>
                     <DialogFooter class="col-span-2">
@@ -235,5 +258,12 @@ const statusStyles: Record<string, string> = {
                 </form>
             </DialogContent>
         </Dialog>
+
+        <DeleteConfirmDialog
+            v-model:open="deleteDialogOpen"
+            :item-label="pendingDelete?.invoice_number ?? ''"
+            show-client-option
+            @confirm="confirmDelete"
+        />
     </AdminLayout>
 </template>

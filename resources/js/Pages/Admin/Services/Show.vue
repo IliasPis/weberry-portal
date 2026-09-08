@@ -1,26 +1,42 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import ServiceFormDialog, { type ServiceRecord } from '@/Components/admin/ServiceFormDialog.vue';
+import TicketCategoryManager from '@/Components/admin/TicketCategoryManager.vue';
+import DeleteConfirmDialog from '@/Components/admin/DeleteConfirmDialog.vue';
 import ExpirationBadge from '@/Components/shared/ExpirationBadge.vue';
 import { Badge } from '@/Components/ui/badge';
 import { Button } from '@/Components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/Components/ui/card';
-import { ArrowLeft } from '@lucide/vue';
+import { ArrowLeft, Trash2 } from '@lucide/vue';
 import { formatDate } from '@/lib/format';
+
+interface TicketCategoryItem {
+    id: number;
+    name: string;
+    creates_task: boolean;
+    is_active: boolean;
+}
 
 interface ServiceDetail extends ServiceRecord {
     client: { id: number; company_name: string };
     website: { id: number; name: string; domain: string } | null;
-    service_type: { id: number; name: string; category: string };
+    service_type: { id: number; name: string; category: string; ticket_categories: TicketCategoryItem[] };
 }
 
 const props = defineProps<{ service: ServiceDetail }>();
 
 const { t, locale } = useI18n();
 const dialogOpen = ref(false);
+const deleteDialogOpen = ref(false);
+
+function confirmDelete(alsoForClient: boolean) {
+    router.delete(route('admin.services.destroy', props.service.id), {
+        data: { also_for_client: alsoForClient },
+    });
+}
 </script>
 
 <template>
@@ -48,7 +64,12 @@ const dialogOpen = ref(false);
                         </div>
                     </div>
                 </div>
-                <Button variant="outline" @click="dialogOpen = true">{{ t('common.edit') }}</Button>
+                <div class="flex items-center gap-2">
+                    <Button variant="outline" @click="dialogOpen = true">{{ t('common.edit') }}</Button>
+                    <Button variant="outline" size="icon" class="text-destructive hover:text-destructive" :title="t('common.delete')" @click="deleteDialogOpen = true">
+                        <Trash2 class="h-4 w-4" />
+                    </Button>
+                </div>
             </div>
 
             <div class="grid gap-4 sm:grid-cols-2">
@@ -121,6 +142,21 @@ const dialogOpen = ref(false);
                     <CardHeader><CardTitle class="text-base">{{ t('services.fields.notesInternal') }}</CardTitle></CardHeader>
                     <CardContent class="text-sm">{{ service.notes_internal }}</CardContent>
                 </Card>
+
+                <Card class="sm:col-span-2">
+                    <CardHeader>
+                        <CardTitle class="text-base">{{ t('services.ticketCategoriesTitle') }}</CardTitle>
+                        <p class="text-sm text-muted-foreground">
+                            {{ t('services.ticketCategoriesHint', { type: service.service_type.name }) }}
+                        </p>
+                    </CardHeader>
+                    <CardContent>
+                        <TicketCategoryManager
+                            :service-type-id="service.service_type.id"
+                            :categories="service.service_type.ticket_categories"
+                        />
+                    </CardContent>
+                </Card>
             </div>
         </div>
 
@@ -131,6 +167,12 @@ const dialogOpen = ref(false);
             :websites="service.website ? [{ id: service.website.id, client_id: service.client.id, domain: service.website.domain }] : []"
             :service-types="[service.service_type]"
             :locked-client-id="service.client.id"
+        />
+        <DeleteConfirmDialog
+            v-model:open="deleteDialogOpen"
+            :item-label="service.name"
+            show-client-option
+            @confirm="confirmDelete"
         />
     </AdminLayout>
 </template>

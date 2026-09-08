@@ -33,6 +33,10 @@ class StoreClientRequest extends FormRequest
             'internal_notes' => ['nullable', 'string'],
             'client_visible_notes' => ['nullable', 'string'],
             'next_action' => ['nullable', 'string', 'max:255'],
+            'create_login' => ['sometimes', 'boolean'],
+            'login_name' => ['required_if:create_login,true', 'nullable', 'string', 'max:255'],
+            'login_email' => ['required_if:create_login,true', 'nullable', 'email', 'max:255', 'unique:users,email'],
+            'login_password' => ['required_if:create_login,true', 'nullable', 'string', 'min:8', 'max:255'],
         ];
     }
 }

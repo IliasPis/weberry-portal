@@ -97,7 +97,7 @@
 
 :root {
     --background:
-        oklch(1 0 0);
+        oklch(0.978 0 0);
     --foreground:
         oklch(0.145 0 0);
     --card:
@@ -143,7 +143,7 @@
     --chart-5:
         oklch(0.269 0 0);
     --radius:
-        0.625rem;
+        0.75rem;
     --sidebar:
         oklch(0.985 0 0);
     --sidebar-foreground:
@@ -235,4 +235,14 @@
     @apply bg-background text-foreground;
     @apply font-sans;
     }
+
+  /* Give a form label breathing room only when it sits directly above a
+     field (label -> input/select/textarea). Labels placed after a
+     Checkbox (checkbox-then-label rows) are unaffected since they have
+     no following sibling here, so their flex alignment stays intact. */
+  [data-slot="label"]:has(+ [data-slot="input"]),
+  [data-slot="label"]:has(+ [data-slot="textarea"]),
+  [data-slot="label"]:has(+ [data-slot="select-trigger"]) {
+    margin-bottom: 0.5rem;
+  }
 }

@@ -8,6 +8,8 @@ use App\Http\Requests\Admin\UpdateTaskRequest;
 use App\Models\Client;
 use App\Models\Task;
 use App\Models\User;
+use App\Services\ActivityLogger;
+use App\Services\NotificationDispatcher;
 use App\Support\PortalRoles;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -16,6 +18,11 @@ use Inertia\Response;
 
 class TaskController extends Controller
 {
+    public function __construct(
+        private readonly NotificationDispatcher $notifications,
+        private readonly ActivityLogger $activity,
+    ) {}
+
     public function index(Request $request): Response
     {
         $this->authorize('viewAny', Task::class);
@@ -52,12 +59,96 @@ class TaskController extends Controller
             $task->checklistItems()->create(['label' => $label, 'position' => $position]);
         }
 
+        if ($task->client_id) {
+            $client = Client::findOrFail($task->client_id);
+
+            if ($task->client_visible) {
+                $this->notifications->notifyClient(
+                    $client,
+                    'task.created',
+                    'Νέα εργασία: '.$task->title,
+                    $task->description,
+                );
+            }
+
+            $this->activity->record(
+                $client,
+                'task.created',
+                'Δημιουργήθηκε εργασία: '.$task->title,
+                clientVisible: (bool) $task->client_visible,
+                websiteId: $task->website_id,
+                entityType: Task::class,
+                entityId: $task->id,
+            );
+        }
+
         return back();
     }
 
     public function update(UpdateTaskRequest $request, Task $task): RedirectResponse
     {
+        $wasClientVisible = (bool) $task->client_visible;
+        $previousStatus = $task->status;
+
         $task->update($request->validated());
+
+        if ($task->client_id && $task->client_visible) {
+            $client = Client::findOrFail($task->client_id);
+            $becameVisible = ! $wasClientVisible;
+            $statusChanged = $previousStatus !== $task->status;
+
+            if ($becameVisible) {
+                $this->notifications->notifyClient(
+                    $client,
+                    'task.created',
+                    'Νέα εργασία: '.$task->title,
+                    $task->description,
+                );
+                $this->activity->record(
+                    $client,
+                    'task.created',
+                    'Δημιουργήθηκε εργασία: '.$task->title,
+                    clientVisible: true,
+                    websiteId: $task->website_id,
+                    entityType: Task::class,
+                    entityId: $task->id,
+                );
+            } elseif ($statusChanged) {
+                $statusLabels = [
+                    'todo' => 'Προς εκτέλεση',
+                    'in_progress' => 'Σε εξέλιξη',
+                    'blocked' => 'Μπλοκαρισμένη',
+                    'waiting' => 'Σε αναμονή',
+                    'completed' => 'Ολοκληρώθηκε',
+                    'cancelled' => 'Ακυρώθηκε',
+                ];
+
+                $this->notifications->notifyClient(
+                    $client,
+                    'task.status',
+                    'Ενημέρωση εργασίας: '.$task->title,
+                    'Κατάσταση: '.($statusLabels[$task->status] ?? $task->status),
+                );
+                $this->activity->record(
+                    $client,
+                    'task.status',
+                    'Η εργασία "'.$task->title.'" ενημερώθηκε.',
+                    clientVisible: true,
+                    websiteId: $task->website_id,
+                    entityType: Task::class,
+                    entityId: $task->id,
+                );
+            }
+        }
+
+        return back();
+    }
+
+    public function destroy(Request $request, Task $task): RedirectResponse
+    {
+        $this->authorize('delete', $task);
+
+        $request->boolean('also_for_client') ? $task->forceDelete() : $task->delete();
 
         return back();
     }

@@ -74,7 +74,7 @@ const styles: Record<string, string> = {
         <Card v-for="note in notes" :key="note.id" :class="styles[note.visibility]">
             <CardContent class="space-y-1 p-3">
                 <div class="flex items-center justify-between text-xs">
-                    <span class="font-semibold">{{ note.author?.name ?? 'System' }}</span>
+                    <span class="font-semibold">{{ note.author?.name ?? t('common.system') }}</span>
                     <span v-if="note.visibility === 'internal'" class="font-bold tracking-wide text-amber-700 dark:text-amber-300">
                         {{ t('notesAdmin.internalBadge') }}
                     </span>

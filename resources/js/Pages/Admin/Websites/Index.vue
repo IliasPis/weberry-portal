@@ -4,11 +4,12 @@ import { Head, Link, router } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import WebsiteFormDialog, { type WebsiteRecord } from '@/Components/admin/WebsiteFormDialog.vue';
+import DeleteConfirmDialog from '@/Components/admin/DeleteConfirmDialog.vue';
 import ExpirationBadge from '@/Components/shared/ExpirationBadge.vue';
 import { Badge } from '@/Components/ui/badge';
 import { Button } from '@/Components/ui/button';
 import { Input } from '@/Components/ui/input';
-import { Plus } from '@lucide/vue';
+import { Plus, Trash2 } from '@lucide/vue';
 import {
     Select,
     SelectContent,
@@ -72,6 +73,23 @@ function openEdit(website: WebsiteRow) {
     editingWebsite.value = website;
     dialogOpen.value = true;
 }
+
+const deleteDialogOpen = ref(false);
+const pendingDelete = ref<WebsiteRow | null>(null);
+
+function openDelete(website: WebsiteRow) {
+    pendingDelete.value = website;
+    deleteDialogOpen.value = true;
+}
+
+function confirmDelete(alsoForClient: boolean) {
+    if (!pendingDelete.value) return;
+    router.delete(route('admin.websites.destroy', pendingDelete.value.id), {
+        data: { also_for_client: alsoForClient },
+        preserveScroll: true,
+        onSuccess: () => (deleteDialogOpen.value = false),
+    });
+}
 </script>
 
 <template>
@@ -132,7 +150,12 @@ function openEdit(website: WebsiteRow) {
                             </TableCell>
                             <TableCell><ExpirationBadge :date="website.ssl_expires_at" /></TableCell>
                             <TableCell class="text-right">
-                                <Button variant="ghost" size="sm" @click="openEdit(website)">{{ t('common.edit') }}</Button>
+                                <div class="flex justify-end gap-1">
+                                    <Button variant="ghost" size="sm" @click="openEdit(website)">{{ t('common.edit') }}</Button>
+                                    <Button variant="ghost" size="sm" class="text-destructive hover:text-destructive" @click="openDelete(website)">
+                                        <Trash2 class="h-4 w-4" />
+                                    </Button>
+                                </div>
                             </TableCell>
                         </TableRow>
                     </TableBody>
@@ -159,5 +182,11 @@ function openEdit(website: WebsiteRow) {
         </div>
 
         <WebsiteFormDialog v-model:open="dialogOpen" :website="editingWebsite" :clients="clients" />
+        <DeleteConfirmDialog
+            v-model:open="deleteDialogOpen"
+            :item-label="pendingDelete?.name ?? ''"
+            show-client-option
+            @confirm="confirmDelete"
+        />
     </AdminLayout>
 </template>

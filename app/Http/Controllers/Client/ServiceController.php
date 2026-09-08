@@ -16,6 +16,7 @@ class ServiceController extends Controller
         $this->authorize('viewAny', Service::class);
 
         $services = Service::query()
+            ->withTrashed()
             ->where('client_id', $request->user()->client_id)
             ->with(['serviceType', 'website'])
             ->orderBy('expiration_date')

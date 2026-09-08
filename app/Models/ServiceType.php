@@ -16,4 +16,9 @@ class ServiceType extends Model
     {
         return $this->hasMany(Service::class);
     }
+
+    public function ticketCategories(): HasMany
+    {
+        return $this->hasMany(TicketCategory::class)->orderBy('sort_order');
+    }
 }

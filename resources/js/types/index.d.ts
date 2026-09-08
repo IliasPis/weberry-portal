@@ -3,6 +3,7 @@ export interface User {
     name: string;
     email: string;
     email_verified_at?: string;
+    notification_preferences?: Record<string, boolean> | null;
 }
 
 export type PageProps<

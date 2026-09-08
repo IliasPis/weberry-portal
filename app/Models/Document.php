@@ -5,10 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[Fillable(['client_id', 'website_id', 'type', 'file_id', 'description', 'visible_to_client', 'uploaded_by_user_id'])]
 class Document extends Model
 {
+    use SoftDeletes;
+
     protected function casts(): array
     {
         return ['visible_to_client' => 'boolean'];
@@ -16,7 +19,7 @@ class Document extends Model
 
     public function client(): BelongsTo
     {
-        return $this->belongsTo(Client::class);
+        return $this->belongsTo(Client::class)->withTrashed();
     }
 
     public function website(): BelongsTo

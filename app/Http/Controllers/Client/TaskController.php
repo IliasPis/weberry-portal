@@ -15,6 +15,7 @@ class TaskController extends Controller
         $this->authorize('viewAny', Task::class);
 
         $tasks = Task::query()
+            ->withTrashed()
             ->where('client_id', $request->user()->client_id)
             ->where('client_visible', true)
             ->with(['website:id,domain'])

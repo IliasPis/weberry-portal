@@ -207,13 +207,13 @@ function submit() {
 
 <template>
     <Dialog :open="open" @update:open="(v) => emit('update:open', v)">
-        <DialogContent class="max-h-[90vh] max-w-2xl overflow-y-auto">
+        <DialogContent class="max-h-[90vh] max-w-2xl overflow-y-auto xl:max-w-4xl">
             <DialogHeader>
                 <DialogTitle>{{ isEditing ? t('services.editService') : t('services.newService') }}</DialogTitle>
                 <DialogDescription />
             </DialogHeader>
 
-            <form class="grid grid-cols-2 gap-4" @submit.prevent="submit">
+            <form class="grid grid-cols-1 gap-x-5 gap-y-5 sm:grid-cols-2" @submit.prevent="submit">
                 <div v-if="!lockedClientId">
                     <Label>{{ t('services.fields.client') }}</Label>
                     <Select v-model="form.client_id">
@@ -314,7 +314,7 @@ function submit() {
                     <div class="col-span-2"><Label>{{ t('services.domain.nameservers') }}</Label><Textarea v-model="form.domain_nameservers" rows="2" /></div>
                 </template>
 
-                <template v-else-if="['maintenance', 'woocommerce_maintenance'].includes(selectedCategory ?? '')">
+                <template v-else-if="['maintenance', 'woocommerce_maintenance', 'total_support_wordpress', 'total_support_woocommerce', 'total_support_b2b', 'total_support_custom_plugin'].includes(selectedCategory ?? '')">
                     <div class="col-span-2 text-sm font-medium text-muted-foreground">{{ t('services.maintenanceDetails') }}</div>
                     <div><Label>{{ t('services.maintenance.plan') }}</Label><Input v-model="form.maintenance_plan" /></div>
                     <div><Label>{{ t('services.maintenance.sla') }}</Label><Input v-model="form.maintenance_sla" /></div>

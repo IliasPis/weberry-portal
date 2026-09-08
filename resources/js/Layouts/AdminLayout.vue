@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
+import DarkModeToggle from '@/Components/DarkModeToggle.vue';
 import LocaleSwitcher from '@/Components/LocaleSwitcher.vue';
 import NotificationBell from '@/Components/NotificationBell.vue';
 import UserMenu from '@/Components/UserMenu.vue';
@@ -27,8 +28,8 @@ const { t } = useI18n();
 <template>
     <SidebarProvider>
         <Sidebar collapsible="icon">
-            <SidebarHeader class="px-3 py-3">
-                <Link :href="route('admin.dashboard')" class="flex items-center gap-2 font-semibold tracking-tight">
+            <SidebarHeader class="px-4 py-4">
+                <Link :href="route('admin.dashboard')" class="flex items-center gap-2.5 font-semibold tracking-tight">
                     <img :src="weberryMark" alt="Weberry" class="h-7 w-7 shrink-0" />
                     <span class="group-data-[collapsible=icon]:hidden">Weberry Admin</span>
                 </Link>
@@ -52,17 +53,18 @@ const { t } = useI18n();
         </Sidebar>
 
         <SidebarInset>
-            <header class="flex h-14 shrink-0 items-center gap-4 border-b px-4">
+            <header class="flex h-16 shrink-0 items-center gap-4 border-b bg-card px-4 sm:px-6">
                 <SidebarTrigger />
                 <GlobalSearch class="hidden sm:block" />
-                <div class="ml-auto flex items-center gap-2">
+                <div class="ml-auto flex items-center gap-1.5">
+                    <DarkModeToggle />
                     <LocaleSwitcher />
                     <NotificationBell />
                     <UserMenu />
                 </div>
             </header>
 
-            <main class="flex-1 p-4 sm:p-6">
+            <main class="flex-1 p-6 sm:p-8">
                 <slot />
             </main>
         </SidebarInset>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Client;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Client\StoreReminderRequest;
 use App\Models\Reminder;
+use App\Services\ActivityLogger;
 use App\Services\NotificationDispatcher;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -13,7 +14,10 @@ use Inertia\Response;
 
 class ReminderController extends Controller
 {
-    public function __construct(private readonly NotificationDispatcher $notifications) {}
+    public function __construct(
+        private readonly NotificationDispatcher $notifications,
+        private readonly ActivityLogger $activity,
+    ) {}
 
     public function index(Request $request): Response
     {
@@ -51,6 +55,15 @@ class ReminderController extends Controller
             'reminder.client',
             "Ο πελάτης {$client->company_name} δημιούργησε υπενθύμιση",
             $reminder->title,
+        );
+
+        $this->activity->record(
+            $client,
+            'reminder.client',
+            'Ο πελάτης δημιούργησε υπενθύμιση: '.$reminder->title,
+            clientVisible: true,
+            entityType: Reminder::class,
+            entityId: $reminder->id,
         );
 
         return back();

@@ -3,6 +3,7 @@
 use App\Models\Client;
 use App\Models\ClientContact;
 use App\Models\Ticket;
+use App\Models\TicketCategory;
 use App\Models\User;
 use App\Models\Website;
 use Database\Seeders\RolePermissionSeeder;
@@ -12,6 +13,7 @@ beforeEach(function () {
 
     $this->client = Client::factory()->create();
     $this->website = Website::factory()->for($this->client)->create();
+    $this->category = TicketCategory::create(['name' => 'Bug', 'creates_task' => true]);
 
     $this->clientUser = User::factory()->create(['client_id' => $this->client->id]);
     $this->clientUser->assignRole('client');
@@ -30,7 +32,7 @@ beforeEach(function () {
 test('a client can create a request for their own website', function () {
     $response = $this->actingAs($this->clientUser)->post(route('client.requests.store'), [
         'website_id' => $this->website->id,
-        'category' => 'bug',
+        'ticket_category_id' => $this->category->id,
         'priority' => 'high',
         'title' => 'Checkout is broken',
         'description' => 'Customers cannot complete checkout on the site.',
@@ -62,7 +64,7 @@ test('a client contact without can_create_requests cannot open a ticket', functi
     ]);
 
     $response = $this->actingAs($restricted)->post(route('client.requests.store'), [
-        'category' => 'billing',
+        'ticket_category_id' => $this->category->id,
         'priority' => 'normal',
         'title' => 'Should be blocked',
         'description' => 'This should not be allowed.',

@@ -66,4 +66,13 @@ class DocumentController extends Controller
 
         return back();
     }
+
+    public function destroy(Request $request, Document $document): RedirectResponse
+    {
+        $this->authorize('delete', $document);
+
+        $request->boolean('also_for_client') ? $document->forceDelete() : $document->delete();
+
+        return back();
+    }
 }

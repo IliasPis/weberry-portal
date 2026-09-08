@@ -16,6 +16,7 @@ class WebsiteController extends Controller
         $this->authorize('viewAny', Website::class);
 
         $websites = Website::query()
+            ->withTrashed()
             ->where('client_id', $request->user()->client_id)
             ->withCount(['services', 'openTickets'])
             ->orderBy('name')
@@ -26,8 +27,14 @@ class WebsiteController extends Controller
         ]);
     }
 
-    public function show(Website $website): Response
+    /**
+     * A website an admin soft-deleted "just for themselves" must still open
+     * for the client, so this resolves the id manually with withTrashed()
+     * instead of relying on route-model binding (which excludes trashed).
+     */
+    public function show(Request $request, int $website): Response
     {
+        $website = Website::withTrashed()->findOrFail($website);
         $this->authorize('view', $website);
 
         $website->load([

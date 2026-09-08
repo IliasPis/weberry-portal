@@ -8,7 +8,7 @@ import PriorityBadge from '@/Components/shared/PriorityBadge.vue';
 import ClientFormDialog, { type ClientRecord } from '@/Components/admin/ClientFormDialog.vue';
 import { Button } from '@/Components/ui/button';
 import { Input } from '@/Components/ui/input';
-import { Plus, Archive } from '@lucide/vue';
+import { Plus, Archive, Trash2 } from '@lucide/vue';
 import {
     Select,
     SelectContent,
@@ -87,6 +87,11 @@ function archive(client: ClientRow) {
     if (!confirm(t('clients.archiveConfirm', { name: client.company_name }))) return;
     router.patch(route('admin.clients.archive', client.id), {}, { preserveScroll: true });
 }
+
+function destroyClient(client: ClientRow) {
+    if (!confirm(t('clients.deleteConfirm', { name: client.company_name }))) return;
+    router.delete(route('admin.clients.destroy', client.id), { preserveScroll: true });
+}
 </script>
 
 <template>
@@ -162,6 +167,9 @@ function archive(client: ClientRow) {
                                     </Button>
                                     <Button variant="ghost" size="sm" @click="archive(client)">
                                         <Archive class="h-4 w-4" />
+                                    </Button>
+                                    <Button variant="ghost" size="sm" class="text-destructive hover:text-destructive" @click="destroyClient(client)">
+                                        <Trash2 class="h-4 w-4" />
                                     </Button>
                                 </div>
                             </TableCell>

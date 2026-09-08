@@ -10,6 +10,7 @@ import ClientFormDialog from '@/Components/admin/ClientFormDialog.vue';
 import WebsiteFormDialog from '@/Components/admin/WebsiteFormDialog.vue';
 import ServiceFormDialog from '@/Components/admin/ServiceFormDialog.vue';
 import NotePanel from '@/Components/admin/NotePanel.vue';
+import ClientContactManager from '@/Components/admin/ClientContactManager.vue';
 import ExpirationBadge from '@/Components/shared/ExpirationBadge.vue';
 import { Button } from '@/Components/ui/button';
 import { Badge } from '@/Components/ui/badge';
@@ -24,6 +25,7 @@ import {
 } from '@/Components/ui/dialog';
 import { Input } from '@/Components/ui/input';
 import { Label } from '@/Components/ui/label';
+import { Textarea } from '@/Components/ui/textarea';
 import {
     Select,
     SelectContent,
@@ -32,7 +34,7 @@ import {
     SelectValue,
 } from '@/Components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Components/ui/tabs';
-import { ArrowLeft, Plus } from '@lucide/vue';
+import { ArrowLeft, Archive, Plus, Trash2 } from '@lucide/vue';
 import { formatDate, formatDateTime } from '@/lib/format';
 
 interface WebsiteRow {
@@ -177,8 +179,19 @@ const { t, locale } = useI18n();
 
 const dialogOpen = ref(false);
 const websiteDialogOpen = ref(false);
+
+function archiveClient() {
+    if (!confirm(t('clients.archiveConfirm', { name: props.client.company_name }))) return;
+    router.patch(route('admin.clients.archive', props.client.id), {}, { preserveScroll: true });
+}
+
+function destroyClient() {
+    if (!confirm(t('clients.deleteConfirm', { name: props.client.company_name }))) return;
+    router.delete(route('admin.clients.destroy', props.client.id));
+}
 const serviceDialogOpen = ref(false);
 const reminderDialogOpen = ref(false);
+const taskDialogOpen = ref(false);
 
 const reminderForm = useForm({
     client_id: props.client.id,
@@ -210,6 +223,43 @@ function toggleReminderComplete(reminder: ReminderRow) {
     );
 }
 
+const taskStatuses = ['todo', 'in_progress', 'blocked', 'waiting', 'completed', 'cancelled'];
+
+const taskForm = useForm({
+    client_id: props.client.id,
+    title: '',
+    description: '',
+    assigned_to_user_id: '',
+    priority: 'normal',
+    status: 'todo',
+    due_date: '',
+    client_visible: false,
+});
+
+function submitTask() {
+    taskForm
+        .transform((data) => ({ ...data, assigned_to_user_id: data.assigned_to_user_id || null }))
+        .post(route('admin.tasks.store'), {
+            preserveScroll: true,
+            onSuccess: () => {
+                taskForm.reset();
+                taskDialogOpen.value = false;
+            },
+        });
+}
+
+function updateTaskStatus(task: TaskRow, status: string) {
+    router.put(route('admin.tasks.update', task.id), { ...task, status, priority: task.priority }, { preserveScroll: true });
+}
+
+function toggleTaskVisible(task: TaskRow) {
+    router.put(
+        route('admin.tasks.update', task.id),
+        { ...task, client_visible: !task.client_visible },
+        { preserveScroll: true },
+    );
+}
+
 const tagToAdd = ref('');
 function addTag() {
     if (!tagToAdd.value) return;
@@ -217,6 +267,15 @@ function addTag() {
         route('admin.clients.tags.attach', props.client.id),
         { tag_id: tagToAdd.value },
         { preserveScroll: true, onSuccess: () => (tagToAdd.value = '') },
+    );
+}
+const newTagName = ref('');
+function addNewTag() {
+    if (!newTagName.value.trim()) return;
+    router.post(
+        route('admin.clients.tags.attach', props.client.id),
+        { name: newTagName.value.trim() },
+        { preserveScroll: true, onSuccess: () => (newTagName.value = '') },
     );
 }
 function removeTag(tagId: number) {
@@ -242,11 +301,19 @@ function removeTag(tagId: number) {
                         </div>
                     </div>
                 </div>
-                <Button variant="outline" @click="dialogOpen = true">{{ t('common.edit') }}</Button>
+                <div class="flex items-center gap-2">
+                    <Button variant="outline" @click="dialogOpen = true">{{ t('common.edit') }}</Button>
+                    <Button variant="outline" size="icon" :title="t('clients.archive')" @click="archiveClient">
+                        <Archive class="h-4 w-4" />
+                    </Button>
+                    <Button variant="outline" size="icon" class="text-destructive hover:text-destructive" :title="t('common.delete')" @click="destroyClient">
+                        <Trash2 class="h-4 w-4" />
+                    </Button>
+                </div>
             </div>
 
             <Tabs default-value="overview">
-                <TabsList class="flex-wrap h-auto">
+                <TabsList class="!h-auto flex-wrap justify-start gap-1 [&_[data-slot=tabs-trigger]]:h-8">
                     <TabsTrigger value="overview">{{ t('clients.tabs.overview') }}</TabsTrigger>
                     <TabsTrigger value="websites">{{ t('clients.tabs.websites') }} ({{ client.websites.length }})</TabsTrigger>
                     <TabsTrigger value="services">{{ t('clients.tabs.services') }} ({{ client.services.length }})</TabsTrigger>
@@ -274,7 +341,21 @@ function removeTag(tagId: number) {
                     </Card>
 
                     <Card>
-                        <CardHeader><CardTitle class="text-base">{{ t('clients.tabs.contacts') }} / Tags</CardTitle></CardHeader>
+                        <CardHeader><CardTitle class="text-base">{{ t('clients.tabs.contacts') }}</CardTitle></CardHeader>
+                        <CardContent class="space-y-2 text-sm">
+                            <div v-for="contact in client.contacts" :key="contact.id" class="flex items-center justify-between gap-2">
+                                <div>
+                                    <p class="font-medium">{{ contact.user?.name ?? '—' }}</p>
+                                    <p class="text-xs text-muted-foreground">{{ contact.user?.email }} · {{ t(`clients.contacts.titles.${contact.contact_title}`) }}</p>
+                                </div>
+                                <Badge v-if="contact.is_primary" variant="secondary" class="shrink-0 text-[10px]">{{ t('clients.contacts.primary') }}</Badge>
+                            </div>
+                            <span v-if="client.contacts.length === 0" class="text-muted-foreground">—</span>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader><CardTitle class="text-base">Tags</CardTitle></CardHeader>
                         <CardContent class="space-y-3 text-sm">
                             <div class="flex flex-wrap gap-1.5">
                                 <Badge v-for="tag in client.tags" :key="tag.id" variant="secondary" class="gap-1">
@@ -283,7 +364,7 @@ function removeTag(tagId: number) {
                                 </Badge>
                                 <span v-if="client.tags.length === 0" class="text-muted-foreground">—</span>
                             </div>
-                            <div class="flex items-center gap-2">
+                            <div v-if="allTags.length > 0" class="flex items-center gap-2">
                                 <Select v-model="tagToAdd">
                                     <SelectTrigger class="h-8 w-48 text-xs"><SelectValue placeholder="+" /></SelectTrigger>
                                     <SelectContent>
@@ -291,6 +372,15 @@ function removeTag(tagId: number) {
                                     </SelectContent>
                                 </Select>
                                 <Button size="sm" variant="outline" :disabled="!tagToAdd" @click="addTag">{{ t('common.add') }}</Button>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <Input
+                                    v-model="newTagName"
+                                    :placeholder="t('clients.newTagPlaceholder')"
+                                    class="h-8 w-48 text-xs"
+                                    @keyup.enter="addNewTag"
+                                />
+                                <Button size="sm" variant="outline" :disabled="!newTagName.trim()" @click="addNewTag">{{ t('common.add') }}</Button>
                             </div>
                         </CardContent>
                     </Card>
@@ -380,20 +470,35 @@ function removeTag(tagId: number) {
                     </Card>
                 </TabsContent>
 
-                <TabsContent value="tasks" class="space-y-2">
+                <TabsContent value="tasks" class="space-y-3">
+                    <div class="flex justify-end">
+                        <Button size="sm" @click="taskDialogOpen = true">
+                            <Plus class="h-4 w-4" />
+                            {{ t('common.create') }}
+                        </Button>
+                    </div>
                     <div v-if="client.tasks.length === 0" class="py-4 text-center text-sm text-muted-foreground">—</div>
                     <Card v-for="task in client.tasks" :key="task.id">
                         <CardContent class="flex items-center justify-between p-3">
                             <div>
                                 <p class="font-medium">
                                     {{ task.title }}
-                                    <Badge v-if="task.client_visible" variant="outline" class="ml-1 text-[10px]">{{ t('common.yes') }}</Badge>
+                                    <button type="button" class="ml-1 inline-flex" :title="t('tasksAdmin.visibleToClient')" @click="toggleTaskVisible(task)">
+                                        <Badge :variant="task.client_visible ? 'default' : 'outline'" class="text-[10px]">
+                                            {{ task.client_visible ? t('tasksAdmin.visibleToClient') : t('common.no') }}
+                                        </Badge>
+                                    </button>
                                 </p>
-                                <p class="text-xs text-muted-foreground">{{ formatDate(task.due_date, locale) }} · {{ task.assigned_to?.name ?? '—' }}</p>
+                                <p class="text-xs text-muted-foreground">{{ formatDate(task.due_date, locale) }} · {{ task.assigned_to?.name ?? t('common.unassigned') }}</p>
                             </div>
                             <div class="flex items-center gap-2">
                                 <PriorityBadge :priority="task.priority" />
-                                <Badge variant="outline">{{ task.status }}</Badge>
+                                <Select :model-value="task.status" @update:model-value="(v) => updateTaskStatus(task, String(v))">
+                                    <SelectTrigger class="h-7 w-40 text-xs"><SelectValue /></SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem v-for="s in taskStatuses" :key="s" :value="s">{{ t(`taskStatus.${s}`) }}</SelectItem>
+                                    </SelectContent>
+                                </Select>
                             </div>
                         </CardContent>
                     </Card>
@@ -441,7 +546,7 @@ function removeTag(tagId: number) {
                             </div>
                             <div class="flex items-center gap-2">
                                 <span class="font-medium">{{ invoice.total }} {{ invoice.currency }}</span>
-                                <Badge variant="outline">{{ invoice.status }}</Badge>
+                                <Badge variant="outline">{{ t(`invoiceStatus.${invoice.status}`) }}</Badge>
                             </div>
                         </CardContent>
                     </Card>
@@ -457,8 +562,8 @@ function removeTag(tagId: number) {
                     <Card v-for="document in client.documents" :key="document.id">
                         <CardContent class="flex items-center justify-between p-3">
                             <div>
-                                <p class="font-medium">{{ document.file?.original_filename ?? document.type }}</p>
-                                <p class="text-xs text-muted-foreground">{{ document.description ?? document.type }} · {{ document.uploaded_by?.name ?? '—' }}</p>
+                                <p class="font-medium">{{ document.file?.original_filename ?? t(`documentType.${document.type}`) }}</p>
+                                <p class="text-xs text-muted-foreground">{{ document.description ?? t(`documentType.${document.type}`) }} · {{ document.uploaded_by?.name ?? '—' }}</p>
                             </div>
                             <Badge :variant="document.visible_to_client ? 'default' : 'outline'">
                                 {{ document.visible_to_client ? t('common.yes') : t('common.no') }}
@@ -473,33 +578,13 @@ function removeTag(tagId: number) {
                         <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full" :class="log.client_visible ? 'bg-blue-500' : 'bg-slate-300'" />
                         <div class="flex-1">
                             <p>{{ log.description }}</p>
-                            <p class="text-xs text-muted-foreground">{{ log.actor?.name ?? 'System' }} · {{ formatDateTime(log.created_at, locale) }}</p>
+                            <p class="text-xs text-muted-foreground">{{ log.actor?.name ?? t('common.system') }} · {{ formatDateTime(log.created_at, locale) }}</p>
                         </div>
                     </div>
                 </TabsContent>
 
-                <TabsContent value="contacts" class="space-y-3">
-                    <div v-if="client.contacts.length === 0" class="py-4 text-center text-sm text-muted-foreground">—</div>
-                    <Card v-for="contact in client.contacts" :key="contact.id">
-                        <CardContent class="space-y-1 p-3 text-sm">
-                            <div class="flex items-center justify-between">
-                                <p class="font-medium">
-                                    {{ contact.user?.name }}
-                                    <Badge v-if="contact.is_primary" variant="outline" class="ml-1 text-[10px]">{{ contact.contact_title }}</Badge>
-                                    <Badge v-else variant="secondary" class="ml-1 text-[10px]">{{ contact.contact_title }}</Badge>
-                                </p>
-                                <span class="text-xs text-muted-foreground">{{ contact.user?.email }}</span>
-                            </div>
-                            <div class="flex flex-wrap gap-1.5 text-xs text-muted-foreground">
-                                <span v-if="contact.can_view_billing">{{ t('clients.contactPerms.viewBilling') }}</span>
-                                <span v-if="contact.can_view_invoices">· {{ t('clients.contactPerms.viewInvoices') }}</span>
-                                <span v-if="contact.can_view_requests">· {{ t('clients.contactPerms.viewRequests') }}</span>
-                                <span v-if="contact.can_view_documents">· {{ t('clients.contactPerms.viewDocuments') }}</span>
-                                <span v-if="contact.can_create_requests">· {{ t('clients.contactPerms.createRequests') }}</span>
-                                <span v-if="contact.can_manage_account">· {{ t('clients.contactPerms.manageAccount') }}</span>
-                            </div>
-                        </CardContent>
-                    </Card>
+                <TabsContent value="contacts">
+                    <ClientContactManager :contacts="client.contacts" :client-id="client.id" />
                 </TabsContent>
             </Tabs>
         </div>
@@ -523,12 +608,12 @@ function removeTag(tagId: number) {
                 <DialogHeader><DialogTitle>{{ t('common.create') }}</DialogTitle></DialogHeader>
                 <form class="space-y-3" @submit.prevent="submitReminder">
                     <div>
-                        <Label>Title</Label>
+                        <Label>{{ t('common.title') }}</Label>
                         <Input v-model="reminderForm.title" />
                     </div>
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <Label>Date</Label>
+                            <Label>{{ t('common.date') }}</Label>
                             <Input v-model="reminderForm.remind_at" type="date" />
                         </div>
                         <div>
@@ -542,7 +627,7 @@ function removeTag(tagId: number) {
                         </div>
                     </div>
                     <div>
-                        <Label>Assigned to</Label>
+                        <Label>{{ t('common.assignedTo') }}</Label>
                         <Select v-model="reminderForm.assigned_to_user_id">
                             <SelectTrigger class="w-full"><SelectValue /></SelectTrigger>
                             <SelectContent>
@@ -555,6 +640,52 @@ function removeTag(tagId: number) {
                         <Button type="submit" :disabled="reminderForm.processing || !reminderForm.title || !reminderForm.remind_at">
                             {{ t('common.save') }}
                         </Button>
+                    </DialogFooter>
+                </form>
+            </DialogContent>
+        </Dialog>
+
+        <Dialog v-model:open="taskDialogOpen">
+            <DialogContent>
+                <DialogHeader><DialogTitle>{{ t('common.create') }}</DialogTitle></DialogHeader>
+                <form class="grid grid-cols-2 gap-3" @submit.prevent="submitTask">
+                    <div class="col-span-2">
+                        <Label>{{ t('common.title') }}</Label>
+                        <Input v-model="taskForm.title" />
+                    </div>
+                    <div class="col-span-2">
+                        <Label>{{ t('common.description') }}</Label>
+                        <Textarea v-model="taskForm.description" rows="2" />
+                    </div>
+                    <div>
+                        <Label>{{ t('common.assignedTo') }}</Label>
+                        <Select v-model="taskForm.assigned_to_user_id">
+                            <SelectTrigger class="w-full"><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                                <SelectItem v-for="u in assignableUsers" :key="u.id" :value="String(u.id)">{{ u.name }}</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <div>
+                        <Label>{{ t('common.priority') }}</Label>
+                        <Select v-model="taskForm.priority">
+                            <SelectTrigger class="w-full"><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                                <SelectItem v-for="p in ['low', 'normal', 'high', 'urgent']" :key="p" :value="p">{{ t(`priority.${p}`) }}</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <div>
+                        <Label>{{ t('common.dueDate') }}</Label>
+                        <Input v-model="taskForm.due_date" type="date" />
+                    </div>
+                    <div class="col-span-2 flex items-center gap-2">
+                        <Checkbox id="client_show_task_visible" v-model="taskForm.client_visible" />
+                        <Label for="client_show_task_visible" class="!mt-0">{{ t('tasksAdmin.visibleToClient') }}</Label>
+                    </div>
+                    <DialogFooter class="col-span-2">
+                        <Button type="button" variant="outline" @click="taskDialogOpen = false">{{ t('common.cancel') }}</Button>
+                        <Button type="submit" :disabled="taskForm.processing || !taskForm.title">{{ t('common.save') }}</Button>
                     </DialogFooter>
                 </form>
             </DialogContent>

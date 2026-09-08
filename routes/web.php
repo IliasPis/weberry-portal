@@ -21,6 +21,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::patch('/notification-preferences', [ProfileController::class, 'updateNotificationPreferences'])
+        ->name('notification-preferences.update');
 
     Route::get('/files/{file}/download', FileDownloadController::class)->name('files.download');
 

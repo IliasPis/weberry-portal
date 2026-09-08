@@ -40,17 +40,17 @@ const { t, locale } = useI18n();
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Type</TableHead>
-                            <TableHead>Description</TableHead>
-                            <TableHead>Website</TableHead>
-                            <TableHead>Date</TableHead>
+                            <TableHead>{{ t('common.type') }}</TableHead>
+                            <TableHead>{{ t('common.description') }}</TableHead>
+                            <TableHead>{{ t('common.website') }}</TableHead>
+                            <TableHead>{{ t('common.date') }}</TableHead>
                             <TableHead class="text-right" />
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         <TableEmpty v-if="documents.length === 0" :colspan="5">—</TableEmpty>
                         <TableRow v-for="document in documents" :key="document.id">
-                            <TableCell class="capitalize">{{ document.type.replace('_', ' ') }}</TableCell>
+                            <TableCell>{{ t(`documentType.${document.type}`) }}</TableCell>
                             <TableCell class="text-sm text-muted-foreground">{{ document.description }}</TableCell>
                             <TableCell class="text-sm text-muted-foreground">{{ document.website?.domain ?? '—' }}</TableCell>
                             <TableCell class="text-sm text-muted-foreground">{{ formatDate(document.created_at, locale) }}</TableCell>

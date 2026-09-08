@@ -26,4 +26,14 @@ final class TicketOptions
 
     /** Statuses that count as "still open" for default admin/client views. */
     public const OPEN_STATUSES = ['new', 'open', 'in_progress', 'waiting_client', 'waiting_third_party', 'scheduled'];
+
+    /**
+     * Categories that mean "please build/fix something" rather than a
+     * question or a support/billing inquiry - these auto-create a linked,
+     * client-visible Task so the work is tracked from the moment the
+     * request comes in, not only once an admin manually turns it into one.
+     */
+    public const WORK_CATEGORIES = [
+        'bug', 'content_change', 'new_feature', 'website_change', 'woocommerce', 'product',
+    ];
 }

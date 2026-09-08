@@ -14,7 +14,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
-#[Fillable(['name', 'email', 'password', 'locale', 'client_id', 'is_active'])]
+#[Fillable(['name', 'email', 'password', 'locale', 'client_id', 'is_active', 'notification_preferences'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -33,12 +33,24 @@ class User extends Authenticatable
             'password' => 'hashed',
             'is_active' => 'boolean',
             'last_login_at' => 'datetime',
+            'notification_preferences' => 'array',
         ];
+    }
+
+    /**
+     * Whether this user wants email notifications for the given category
+     * (ticket/note/task/invoice/document/maintenance). Defaults to true -
+     * unset means "not turned off yet", not "opted out". Admin-side users
+     * always get email regardless of this (the preference UI is client-only).
+     */
+    public function wantsEmailFor(string $category): bool
+    {
+        return (bool) ($this->notification_preferences[$category] ?? true);
     }
 
     public function client(): BelongsTo
     {
-        return $this->belongsTo(Client::class);
+        return $this->belongsTo(Client::class)->withTrashed();
     }
 
     public function clientContacts(): HasMany

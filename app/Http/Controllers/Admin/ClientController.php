@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreClientRequest;
 use App\Http\Requests\Admin\UpdateClientRequest;
 use App\Models\Client;
+use App\Models\ClientContact;
 use App\Models\ServiceType;
 use App\Models\Tag;
 use App\Models\User;
@@ -30,11 +31,11 @@ class ClientController extends Controller
             ->when($request->filled('search'), function ($query) use ($request) {
                 $term = '%'.$request->string('search').'%';
                 $query->where(function ($query) use ($term) {
-                    $query->where('company_name', 'ilike', $term)
-                        ->orWhere('vat_number', 'ilike', $term)
-                        ->orWhere('email', 'ilike', $term)
-                        ->orWhere('phone', 'ilike', $term)
-                        ->orWhereHas('websites', fn ($q) => $q->where('domain', 'ilike', $term));
+                    $query->whereLike('company_name', $term)
+                        ->orWhereLike('vat_number', $term)
+                        ->orWhereLike('email', $term)
+                        ->orWhereLike('phone', $term)
+                        ->orWhereHas('websites', fn ($q) => $q->whereLike('domain', $term));
                 });
             })
             ->when($request->filled('status'), fn ($query) => $query->where('status', $request->string('status')))
@@ -51,7 +52,38 @@ class ClientController extends Controller
 
     public function store(StoreClientRequest $request): RedirectResponse
     {
-        Client::create($request->validated());
+        $validated = $request->validated();
+        $createLogin = (bool) ($validated['create_login'] ?? false);
+        $loginName = $validated['login_name'] ?? null;
+        $loginEmail = $validated['login_email'] ?? null;
+        $loginPassword = $validated['login_password'] ?? null;
+        unset($validated['create_login'], $validated['login_name'], $validated['login_email'], $validated['login_password']);
+
+        $client = Client::create($validated);
+
+        if ($createLogin) {
+            $user = User::create([
+                'name' => $loginName,
+                'email' => $loginEmail,
+                'password' => $loginPassword,
+                'client_id' => $client->id,
+                'locale' => 'el',
+            ]);
+            $user->assignRole('client');
+
+            ClientContact::create([
+                'client_id' => $client->id,
+                'user_id' => $user->id,
+                'contact_title' => 'owner',
+                'is_primary' => true,
+                'can_view_billing' => true,
+                'can_view_invoices' => true,
+                'can_view_requests' => true,
+                'can_view_documents' => true,
+                'can_create_requests' => true,
+                'can_manage_account' => true,
+            ]);
+        }
 
         return back();
     }
@@ -98,12 +130,40 @@ class ClientController extends Controller
         return back();
     }
 
+    /**
+     * Remove the client and cut off all of its users' access, without
+     * touching any of its services/websites/invoices/etc - those stay in
+     * place for the historical/financial record, just no longer reachable
+     * through the client's own login.
+     */
+    public function destroy(Client $client): RedirectResponse
+    {
+        $this->authorize('delete', $client);
+
+        User::where('client_id', $client->id)->update(['is_active' => false]);
+        $client->delete();
+
+        return redirect()->route('admin.clients.index');
+    }
+
     public function attachTag(Request $request, Client $client): RedirectResponse
     {
         $this->authorize('update', $client);
 
-        $validated = $request->validate(['tag_id' => ['required', 'exists:tags,id']]);
-        $client->tags()->syncWithoutDetaching([$validated['tag_id']]);
+        $validated = $request->validate([
+            'tag_id' => ['nullable', 'exists:tags,id'],
+            'name' => ['nullable', 'string', 'max:50'],
+        ]);
+
+        $tagId = $validated['tag_id'] ?? null;
+
+        if (! $tagId && ! empty($validated['name'])) {
+            $tagId = Tag::query()->firstOrCreate(['name' => $validated['name']])->id;
+        }
+
+        abort_unless($tagId, 422);
+
+        $client->tags()->syncWithoutDetaching([$tagId]);
 
         return back();
     }

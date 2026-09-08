@@ -34,8 +34,9 @@ import {
     TableHeader,
     TableRow,
 } from '@/Components/ui/table';
-import { Plus } from '@lucide/vue';
+import { Plus, Trash2 } from '@lucide/vue';
 import { formatDate } from '@/lib/format';
+import DeleteConfirmDialog from '@/Components/admin/DeleteConfirmDialog.vue';
 
 interface TaskRow {
     id: number;
@@ -92,6 +93,31 @@ function submit() {
 function updateStatus(task: TaskRow, status: string) {
     router.put(route('admin.tasks.update', task.id), { ...task, status, priority: task.priority }, { preserveScroll: true });
 }
+
+function toggleClientVisible(task: TaskRow) {
+    router.put(
+        route('admin.tasks.update', task.id),
+        { ...task, client_visible: !task.client_visible },
+        { preserveScroll: true },
+    );
+}
+
+const deleteDialogOpen = ref(false);
+const pendingDelete = ref<TaskRow | null>(null);
+
+function openDelete(task: TaskRow) {
+    pendingDelete.value = task;
+    deleteDialogOpen.value = true;
+}
+
+function confirmDelete(alsoForClient: boolean) {
+    if (!pendingDelete.value) return;
+    router.delete(route('admin.tasks.destroy', pendingDelete.value.id), {
+        data: { also_for_client: alsoForClient },
+        preserveScroll: true,
+        onSuccess: () => (deleteDialogOpen.value = false),
+    });
+}
 </script>
 
 <template>
@@ -105,44 +131,61 @@ function updateStatus(task: TaskRow, status: string) {
             </div>
 
             <Tabs :model-value="view" @update:model-value="(v) => changeView(String(v))">
-                <TabsList>
-                    <TabsTrigger value="open">Open</TabsTrigger>
-                    <TabsTrigger value="mine">Mine</TabsTrigger>
-                    <TabsTrigger value="all">All</TabsTrigger>
-                </TabsList>
+                <div class="overflow-x-auto">
+                    <TabsList class="justify-start">
+                        <TabsTrigger value="open">{{ t('tasksAdmin.viewOpen') }}</TabsTrigger>
+                        <TabsTrigger value="mine">{{ t('tasksAdmin.viewMine') }}</TabsTrigger>
+                        <TabsTrigger value="all">{{ t('tasksAdmin.viewAll') }}</TabsTrigger>
+                    </TabsList>
+                </div>
             </Tabs>
 
             <div class="rounded-md border bg-background">
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Title</TableHead>
-                            <TableHead>Client</TableHead>
+                            <TableHead>{{ t('common.title') }}</TableHead>
+                            <TableHead>{{ t('common.client') }}</TableHead>
                             <TableHead>{{ t('common.priority') }}</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead>Assigned</TableHead>
-                            <TableHead>Due</TableHead>
+                            <TableHead>{{ t('common.status') }}</TableHead>
+                            <TableHead>{{ t('common.assignedTo') }}</TableHead>
+                            <TableHead>{{ t('common.dueDate') }}</TableHead>
+                            <TableHead class="text-right">{{ t('common.actions') }}</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        <TableEmpty v-if="tasks.data.length === 0" :colspan="6">—</TableEmpty>
+                        <TableEmpty v-if="tasks.data.length === 0" :colspan="7">—</TableEmpty>
                         <TableRow v-for="task in tasks.data" :key="task.id">
                             <TableCell class="font-medium">
                                 {{ task.title }}
-                                <Badge v-if="task.client_visible" variant="outline" class="ml-1 text-[10px]">visible</Badge>
+                                <button
+                                    type="button"
+                                    class="ml-1 inline-flex"
+                                    :title="t('tasksAdmin.visibleToClient')"
+                                    @click="toggleClientVisible(task)"
+                                >
+                                    <Badge :variant="task.client_visible ? 'default' : 'outline'" class="text-[10px]">
+                                        {{ task.client_visible ? t('tasksAdmin.visibleToClient') : t('common.no') }}
+                                    </Badge>
+                                </button>
                             </TableCell>
-                            <TableCell class="text-sm text-muted-foreground">{{ task.client?.company_name ?? '—' }}</TableCell>
+                            <TableCell class="text-sm text-muted-foreground">{{ task.client?.company_name ?? t('common.unassigned') }}</TableCell>
                             <TableCell><PriorityBadge :priority="task.priority" /></TableCell>
                             <TableCell>
                                 <Select :model-value="task.status" @update:model-value="(v) => updateStatus(task, String(v))">
                                     <SelectTrigger class="h-7 w-36 text-xs"><SelectValue /></SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem v-for="s in statuses" :key="s" :value="s">{{ s }}</SelectItem>
+                                        <SelectItem v-for="s in statuses" :key="s" :value="s">{{ t(`taskStatus.${s}`) }}</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </TableCell>
-                            <TableCell class="text-sm text-muted-foreground">{{ task.assigned_to?.name ?? '—' }}</TableCell>
+                            <TableCell class="text-sm text-muted-foreground">{{ task.assigned_to?.name ?? t('common.unassigned') }}</TableCell>
                             <TableCell class="text-sm text-muted-foreground">{{ formatDate(task.due_date, locale) }}</TableCell>
+                            <TableCell class="text-right">
+                                <Button variant="ghost" size="sm" class="text-destructive hover:text-destructive" @click="openDelete(task)">
+                                    <Trash2 class="h-4 w-4" />
+                                </Button>
+                            </TableCell>
                         </TableRow>
                     </TableBody>
                 </Table>
@@ -163,7 +206,7 @@ function updateStatus(task: TaskRow, status: string) {
                         </Select>
                     </div>
                     <div>
-                        <Label>Assigned to</Label>
+                        <Label>{{ t('common.assignedTo') }}</Label>
                         <Select v-model="form.assigned_to_user_id">
                             <SelectTrigger class="w-full"><SelectValue /></SelectTrigger>
                             <SelectContent>
@@ -172,11 +215,11 @@ function updateStatus(task: TaskRow, status: string) {
                         </Select>
                     </div>
                     <div class="col-span-2">
-                        <Label>Title</Label>
+                        <Label>{{ t('common.title') }}</Label>
                         <Input v-model="form.title" />
                     </div>
                     <div class="col-span-2">
-                        <Label>{{ t('services.fields.notesClient') }}</Label>
+                        <Label>{{ t('common.description') }}</Label>
                         <Textarea v-model="form.description" rows="2" />
                     </div>
                     <div>
@@ -189,7 +232,7 @@ function updateStatus(task: TaskRow, status: string) {
                         </Select>
                     </div>
                     <div>
-                        <Label>Due date</Label>
+                        <Label>{{ t('common.dueDate') }}</Label>
                         <Input v-model="form.due_date" type="date" />
                     </div>
                     <div class="col-span-2 flex items-center gap-2">
@@ -203,5 +246,12 @@ function updateStatus(task: TaskRow, status: string) {
                 </form>
             </DialogContent>
         </Dialog>
+
+        <DeleteConfirmDialog
+            v-model:open="deleteDialogOpen"
+            :item-label="pendingDelete?.title ?? ''"
+            :show-client-option="pendingDelete?.client_visible ?? false"
+            @confirm="confirmDelete"
+        />
     </AdminLayout>
 </template>

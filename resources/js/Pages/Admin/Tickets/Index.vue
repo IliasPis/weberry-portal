@@ -5,6 +5,8 @@ import { useI18n } from 'vue-i18n';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import TicketStatusBadge from '@/Components/shared/TicketStatusBadge.vue';
 import PriorityBadge from '@/Components/shared/PriorityBadge.vue';
+import DeleteConfirmDialog from '@/Components/admin/DeleteConfirmDialog.vue';
+import { Button } from '@/Components/ui/button';
 import { Input } from '@/Components/ui/input';
 import {
     Select,
@@ -14,6 +16,7 @@ import {
     SelectValue,
 } from '@/Components/ui/select';
 import { Tabs, TabsList, TabsTrigger } from '@/Components/ui/tabs';
+import { Trash2 } from '@lucide/vue';
 import {
     Table,
     TableBody,
@@ -28,7 +31,7 @@ import { formatDate } from '@/lib/format';
 interface TicketRow {
     id: number;
     title: string;
-    category: string;
+    category: { id: number; name: string } | null;
     priority: 'low' | 'normal' | 'high' | 'urgent';
     status: string;
     created_at: string;
@@ -37,12 +40,18 @@ interface TicketRow {
     assigned_to: { id: number; name: string } | null;
 }
 
+interface CategoryOption {
+    id: number;
+    name: string;
+}
+
 const props = defineProps<{
     tickets: {
         data: TicketRow[];
         links: { url: string | null; label: string; active: boolean }[];
     };
     filters: { search?: string; category?: string; priority?: string; view?: string };
+    categories: CategoryOption[];
 }>();
 
 const { t, locale } = useI18n();
@@ -51,12 +60,6 @@ const search = ref(props.filters.search ?? '');
 const category = ref(props.filters.category ?? 'all');
 const priority = ref(props.filters.priority ?? 'all');
 const view = ref(props.filters.view ?? 'open');
-
-const categories = [
-    'bug', 'content_change', 'new_feature', 'website_change', 'woocommerce', 'product', 'email',
-    'hosting', 'domain', 'ssl', 'payment', 'shipping', 'technical_support', 'billing',
-    'general_question', 'other',
-];
 
 function applyFilters() {
     router.get(
@@ -77,6 +80,22 @@ watch(search, () => {
     debounceTimer = setTimeout(applyFilters, 350);
 });
 watch([category, priority, view], applyFilters);
+
+const deleteDialogOpen = ref(false);
+const pendingDelete = ref<TicketRow | null>(null);
+
+function openDelete(ticket: TicketRow) {
+    pendingDelete.value = ticket;
+    deleteDialogOpen.value = true;
+}
+
+function confirmDelete(alsoForClient: boolean) {
+    if (!pendingDelete.value) return;
+    router.delete(route('admin.tickets.destroy', pendingDelete.value.id), {
+        data: { also_for_client: alsoForClient },
+        onSuccess: () => (deleteDialogOpen.value = false),
+    });
+}
 </script>
 
 <template>
@@ -87,11 +106,13 @@ watch([category, priority, view], applyFilters);
             <h1 class="text-2xl font-semibold tracking-tight">{{ t('tickets.adminTitle') }}</h1>
 
             <Tabs v-model="view">
-                <TabsList>
-                    <TabsTrigger value="open">{{ t('tickets.views.open') }}</TabsTrigger>
-                    <TabsTrigger value="unassigned">{{ t('tickets.views.unassigned') }}</TabsTrigger>
-                    <TabsTrigger value="all">{{ t('tickets.views.all') }}</TabsTrigger>
-                </TabsList>
+                <div class="overflow-x-auto">
+                    <TabsList class="justify-start">
+                        <TabsTrigger value="open">{{ t('tickets.views.open') }}</TabsTrigger>
+                        <TabsTrigger value="unassigned">{{ t('tickets.views.unassigned') }}</TabsTrigger>
+                        <TabsTrigger value="all">{{ t('tickets.views.all') }}</TabsTrigger>
+                    </TabsList>
+                </div>
             </Tabs>
 
             <div class="flex flex-wrap gap-3">
@@ -100,7 +121,7 @@ watch([category, priority, view], applyFilters);
                     <SelectTrigger class="w-48"><SelectValue /></SelectTrigger>
                     <SelectContent>
                         <SelectItem value="all">{{ t('tickets.allCategories') }}</SelectItem>
-                        <SelectItem v-for="c in categories" :key="c" :value="c">{{ t(`ticketCategory.${c}`) }}</SelectItem>
+                        <SelectItem v-for="c in props.categories" :key="c.id" :value="String(c.id)">{{ c.name }}</SelectItem>
                     </SelectContent>
                 </Select>
                 <Select v-model="priority">
@@ -120,11 +141,11 @@ watch([category, priority, view], applyFilters);
                         <TableRow>
                             <TableHead>{{ t('tickets.columns.title') }}</TableHead>
                             <TableHead>{{ t('tickets.columns.client') }}</TableHead>
-                            <TableHead>{{ t('tickets.columns.category') }}</TableHead>
                             <TableHead>{{ t('tickets.columns.priority') }}</TableHead>
                             <TableHead>{{ t('tickets.columns.status') }}</TableHead>
                             <TableHead>{{ t('tickets.columns.assignedTo') }}</TableHead>
                             <TableHead>{{ t('tickets.columns.created') }}</TableHead>
+                            <TableHead class="text-right">{{ t('common.actions') }}</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -134,20 +155,27 @@ watch([category, priority, view], applyFilters);
                         <TableRow v-for="ticket in tickets.data" :key="ticket.id">
                             <TableCell>
                                 <Link :href="route('admin.tickets.show', ticket.id)" class="font-medium hover:underline">
-                                    {{ ticket.title }}
+                                    {{ ticket.category?.name ?? t('tickets.fields.category') }}
                                 </Link>
-                                <div v-if="ticket.website" class="text-xs text-muted-foreground">{{ ticket.website.domain }}</div>
+                                <div class="text-xs text-muted-foreground">
+                                    {{ ticket.title }}
+                                    <span v-if="ticket.website"> · {{ ticket.website.domain }}</span>
+                                </div>
                             </TableCell>
                             <TableCell>
                                 <Link :href="route('admin.clients.show', ticket.client.id)" class="hover:underline">
                                     {{ ticket.client.company_name }}
                                 </Link>
                             </TableCell>
-                            <TableCell class="text-sm text-muted-foreground">{{ t(`ticketCategory.${ticket.category}`) }}</TableCell>
                             <TableCell><PriorityBadge :priority="ticket.priority" /></TableCell>
                             <TableCell><TicketStatusBadge :status="ticket.status" /></TableCell>
                             <TableCell class="text-sm text-muted-foreground">{{ ticket.assigned_to?.name ?? '—' }}</TableCell>
                             <TableCell class="text-sm text-muted-foreground">{{ formatDate(ticket.created_at, locale) }}</TableCell>
+                            <TableCell class="text-right">
+                                <Button variant="ghost" size="sm" class="text-destructive hover:text-destructive" @click="openDelete(ticket)">
+                                    <Trash2 class="h-4 w-4" />
+                                </Button>
+                            </TableCell>
                         </TableRow>
                     </TableBody>
                 </Table>
@@ -171,5 +199,12 @@ watch([category, priority, view], applyFilters);
                 </Link>
             </div>
         </div>
+
+        <DeleteConfirmDialog
+            v-model:open="deleteDialogOpen"
+            :item-label="pendingDelete?.title ?? ''"
+            show-client-option
+            @confirm="confirmDelete"
+        />
     </AdminLayout>
 </template>

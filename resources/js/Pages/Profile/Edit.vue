@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import ClientLayout from '@/Layouts/ClientLayout.vue';
 import DeleteUserForm from './Partials/DeleteUserForm.vue';
+import NotificationPreferencesForm from './Partials/NotificationPreferencesForm.vue';
 import UpdatePasswordForm from './Partials/UpdatePasswordForm.vue';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm.vue';
 import { Head, usePage } from '@inertiajs/vue3';
@@ -35,6 +36,10 @@ const layout = computed(() => (page.props.auth.is_admin_side ? AdminLayout : Cli
 
             <div class="rounded-lg border bg-background p-4 sm:p-8">
                 <UpdatePasswordForm class="max-w-xl" />
+            </div>
+
+            <div v-if="!page.props.auth.is_admin_side" class="rounded-lg border bg-background p-4 sm:p-8">
+                <NotificationPreferencesForm class="max-w-xl" />
             </div>
 
             <div class="rounded-lg border bg-background p-4 sm:p-8">

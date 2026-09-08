@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\Website;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 
 class DemoDataSeeder extends Seeder
 {
@@ -21,7 +22,10 @@ class DemoDataSeeder extends Seeder
 
     public function run(): void
     {
-        $serviceTypes = $this->seedServiceTypes();
+        // The real service-type catalog is permanent, production data
+        // seeded by ServiceTypeSeeder (which runs before this in
+        // DatabaseSeeder) - demo clients just get assigned real plans.
+        $serviceTypes = ServiceType::query()->get()->keyBy('category');
 
         $superAdmin = User::factory()->create([
             'name' => 'Ilias (Super Admin)',
@@ -44,39 +48,9 @@ class DemoDataSeeder extends Seeder
     }
 
     /**
-     * @return array<string, ServiceType>
+     * @param  Collection<string, ServiceType>  $serviceTypes
      */
-    private function seedServiceTypes(): array
-    {
-        $catalog = [
-            ['name' => 'Hosting', 'category' => 'hosting'],
-            ['name' => 'Domain', 'category' => 'domain'],
-            ['name' => 'Website Maintenance', 'category' => 'maintenance'],
-            ['name' => 'WooCommerce Maintenance', 'category' => 'woocommerce_maintenance'],
-            ['name' => 'SEO', 'category' => 'seo'],
-            ['name' => 'SSL Certificate', 'category' => 'ssl'],
-            ['name' => 'Email Hosting', 'category' => 'email'],
-            ['name' => 'Plugin License', 'category' => 'plugin_license'],
-            ['name' => 'Theme License', 'category' => 'theme_license'],
-            ['name' => 'Backup Service', 'category' => 'backup'],
-            ['name' => 'CDN', 'category' => 'cdn'],
-            ['name' => 'Custom Development', 'category' => 'development'],
-            ['name' => 'Support Contract', 'category' => 'support'],
-            ['name' => 'Other', 'category' => 'other'],
-        ];
-
-        $types = [];
-        foreach ($catalog as $row) {
-            $types[$row['category']] = ServiceType::query()->firstOrCreate($row);
-        }
-
-        return $types;
-    }
-
-    /**
-     * @param  array<string, ServiceType>  $serviceTypes
-     */
-    private function seedAbcFishing(array $serviceTypes): void
+    private function seedAbcFishing($serviceTypes): void
     {
         $client = Client::create([
             'company_name' => 'ABC Fishing Ltd.',
@@ -189,12 +163,12 @@ class DemoDataSeeder extends Seeder
             'client_visible_notes' => null,
         ]);
 
-        $hosting = Service::create([
+        $support = Service::create([
             'client_id' => $client->id,
             'website_id' => $website->id,
-            'service_type_id' => $serviceTypes['hosting']->id,
-            'name' => 'WooCommerce Pro Hosting',
-            'provider' => 'Weberry Hosting',
+            'service_type_id' => $serviceTypes['total_support_woocommerce']->id,
+            'name' => 'Ολοκληρωμένη Υποστήριξη WooCommerce',
+            'provider' => 'Weberry',
             'start_date' => Carbon::parse('2025-09-20'),
             'expiration_date' => Carbon::parse('2026-09-20'),
             'renewal_date' => Carbon::parse('2026-09-20'),
@@ -203,55 +177,11 @@ class DemoDataSeeder extends Seeder
             'client_price' => 150.00,
             'auto_renewal' => true,
             'status' => 'active',
-            'notes_client' => 'Περιλαμβάνει καθημερινά backups και CDN.',
+            'notes_client' => 'Περιλαμβάνει hosting, καθημερινά backups, ενημερώσεις, ασφάλεια και υποστήριξη καταστήματος.',
         ]);
-        $hosting->hostingDetail()->create([
-            'package' => 'WooCommerce Pro',
-            'server' => 'srv-gr-04',
-            'ip' => '185.203.114.42',
-            'storage' => '40 GB SSD',
-        ]);
-
-        $domain = Service::create([
-            'client_id' => $client->id,
-            'website_id' => $website->id,
-            'service_type_id' => $serviceTypes['domain']->id,
-            'name' => 'aboutfishing.gr Domain',
-            'provider' => 'Weberry Registrar',
-            'start_date' => Carbon::parse('2020-10-15'),
-            'expiration_date' => Carbon::parse('2026-10-15'),
-            'renewal_date' => Carbon::parse('2026-10-15'),
-            'billing_cycle' => 'yearly',
-            'internal_cost' => 12.00,
-            'client_price' => 20.00,
-            'auto_renewal' => true,
-            'status' => 'active',
-        ]);
-        $domain->domainDetail()->create([
-            'registrar' => 'Weberry Registrar',
-            'nameservers' => "ns1.cloudflare.com\nns2.cloudflare.com",
-            'dns_provider' => 'Cloudflare',
-        ]);
-
-        $maintenance = Service::create([
-            'client_id' => $client->id,
-            'website_id' => $website->id,
-            'service_type_id' => $serviceTypes['maintenance']->id,
-            'name' => 'Website Maintenance - Standard',
-            'provider' => 'Weberry',
-            'start_date' => Carbon::parse('2025-01-15'),
-            'expiration_date' => null,
-            'renewal_date' => Carbon::parse('2026-09-01'),
-            'billing_cycle' => 'monthly',
-            'internal_cost' => 25.00,
-            'client_price' => 79.00,
-            'auto_renewal' => true,
-            'status' => 'active',
-            'notes_client' => 'WordPress/WooCommerce updates, backups, security scans, μηνιαία αναφορά.',
-        ]);
-        $maintenance->maintenanceDetail()->create([
-            'plan' => 'Standard',
-            'included_hours' => 2,
+        $support->maintenanceDetail()->create([
+            'plan' => 'Ολοκληρωμένη Υποστήριξη WooCommerce',
+            'included_hours' => 4,
             'used_hours' => 1,
             'sla' => 'Απάντηση εντός 1 εργάσιμης ημέρας',
         ]);
@@ -261,9 +191,9 @@ class DemoDataSeeder extends Seeder
      * A second, unrelated client - exists so client-isolation checks
      * (Policies, tests) have a real "someone else's data" to fail against.
      *
-     * @param  array<string, ServiceType>  $serviceTypes
+     * @param  Collection<string, ServiceType>  $serviceTypes
      */
-    private function seedSecondaryClient(array $serviceTypes): void
+    private function seedSecondaryClient($serviceTypes): void
     {
         $client = Client::create([
             'company_name' => 'Nikos Taverna',
@@ -311,12 +241,12 @@ class DemoDataSeeder extends Seeder
             'status' => 'active',
         ]);
 
-        Service::create([
+        $support = Service::create([
             'client_id' => $client->id,
             'website_id' => $website->id,
-            'service_type_id' => $serviceTypes['hosting']->id,
-            'name' => 'Basic Hosting',
-            'provider' => 'Weberry Hosting',
+            'service_type_id' => $serviceTypes['total_support_wordpress']->id,
+            'name' => 'Ολοκληρωμένη Υποστήριξη WordPress',
+            'provider' => 'Weberry',
             'start_date' => Carbon::parse('2025-06-01'),
             'expiration_date' => Carbon::parse('2026-09-15'),
             'renewal_date' => Carbon::parse('2026-09-15'),
@@ -325,6 +255,12 @@ class DemoDataSeeder extends Seeder
             'client_price' => 90.00,
             'auto_renewal' => false,
             'status' => 'active',
+        ]);
+        $support->maintenanceDetail()->create([
+            'plan' => 'Ολοκληρωμένη Υποστήριξη WordPress',
+            'included_hours' => 2,
+            'used_hours' => 0,
+            'sla' => 'Απάντηση εντός 2 εργάσιμων ημερών',
         ]);
     }
 }

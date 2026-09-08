@@ -41,6 +41,23 @@ class ProfileController extends Controller
     }
 
     /**
+     * Update which categories of client-facing events the user wants
+     * emailed to them. In-app (bell) notifications are unaffected -
+     * this only gates the 'mail' channel on GenericNotification.
+     */
+    public function updateNotificationPreferences(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'notification_preferences' => ['required', 'array'],
+            'notification_preferences.*' => ['boolean'],
+        ]);
+
+        $request->user()->update(['notification_preferences' => $validated['notification_preferences']]);
+
+        return back();
+    }
+
+    /**
      * Delete the user's account.
      */
     public function destroy(Request $request): RedirectResponse

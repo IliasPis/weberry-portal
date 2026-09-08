@@ -58,7 +58,10 @@ test('a client can see their own service with client_price but never internal_co
 
     $content = $response->getContent();
     expect($content)->toContain('150'); // client_price is fine
-    expect($content)->not->toContain('42'); // internal_cost must never appear
+    // internal_cost (42.00) must never appear - checked as the decimal-cast
+    // serialized form, not the bare digits, since those could coincidentally
+    // match an unrelated record's autoincrement id.
+    expect($content)->not->toContain('42.00');
     expect($content)->not->toContain('Margin is huge');
 });
 

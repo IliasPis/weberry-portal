@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Client;
 use App\Models\User;
 use Database\Seeders\RolePermissionSeeder;
 
@@ -27,7 +28,8 @@ test('an admin-side user is bounced away from the client portal', function () {
 });
 
 test('a client-side user reaches the client portal', function () {
-    $client = User::factory()->create(['email_verified_at' => now()]);
+    $company = Client::factory()->create();
+    $client = User::factory()->create(['email_verified_at' => now(), 'client_id' => $company->id]);
     $client->assignRole('client');
 
     $this->actingAs($client)->get('/portal/dashboard')->assertOk();

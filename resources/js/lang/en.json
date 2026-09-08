@@ -5,6 +5,9 @@
         "edit": "Edit",
         "delete": "Delete",
         "archive": "Archive",
+        "deleteConfirmTitle": "Delete?",
+        "deleteConfirmBody": "Are you sure you want to delete \"{item}\"?",
+        "deleteAlsoForClient": "Also delete on the client's side (otherwise it stays visible there)",
         "search": "Search",
         "loading": "Loading...",
         "close": "Close",
@@ -20,7 +23,20 @@
         "add": "Add",
         "viewAll": "View all",
         "logout": "Log out",
-        "welcome": "Welcome, {name}"
+        "welcome": "Welcome, {name}",
+        "title": "Title",
+        "client": "Client",
+        "website": "Website",
+        "assignedTo": "Assigned to",
+        "createdBy": "Created by",
+        "dueDate": "Due date",
+        "date": "Date",
+        "file": "File",
+        "type": "Type",
+        "description": "Description",
+        "unassigned": "—",
+        "system": "System",
+        "toggleTheme": "Toggle dark mode"
     },
     "auth": {
         "email": "Email",
@@ -39,6 +55,37 @@
         "resendVerificationEmail": "Resend Verification Email",
         "forgotPasswordText": "Forgot your password? No problem. Just let us know your email address and we will email you a password reset link.",
         "confirmPasswordText": "This is a secure area of the application. Please confirm your password before continuing."
+    },
+    "profile": {
+        "infoTitle": "Profile Information",
+        "infoText": "Update your account's profile information and email address.",
+        "name": "Name",
+        "emailUnverified": "Your email address is unverified.",
+        "resendVerification": "Click here to re-send the verification email.",
+        "verificationSent": "A new verification link has been sent to your email address.",
+        "save": "Save",
+        "saved": "Saved.",
+        "passwordTitle": "Update Password",
+        "passwordText": "Ensure your account is using a long, random password to stay secure.",
+        "currentPassword": "Current Password",
+        "newPassword": "New Password",
+        "deleteTitle": "Delete Account",
+        "deleteText": "Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.",
+        "deleteButton": "Delete Account",
+        "deleteConfirmTitle": "Are you sure you want to delete your account?",
+        "deleteConfirmText": "Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.",
+        "passwordPlaceholder": "Password",
+        "notifTitle": "Email Notifications",
+        "notifText": "Choose what you want emailed to you, in addition to the in-app notifications.",
+        "notifSaved": "Preferences saved."
+    },
+    "notificationCategories": {
+        "ticket": "Request replies",
+        "note": "New notes",
+        "task": "New tasks",
+        "invoice": "Invoices",
+        "document": "New documents",
+        "maintenance": "Maintenance reports"
     },
     "priority": {
         "low": "Low",
@@ -101,12 +148,21 @@
         "title": "Clients",
         "newClient": "New Client",
         "editClient": "Edit Client",
+        "login": {
+            "createLogin": "Create login credentials for the client",
+            "name": "User name",
+            "email": "Login email",
+            "password": "Password",
+            "passwordHint": "Write this down — it won't be shown again. Give it to the client so they can log in."
+        },
         "searchPlaceholder": "Search company, VAT, email, phone, domain...",
         "allStatuses": "All statuses",
         "allPriorities": "All priorities",
         "noResults": "No clients found.",
         "archive": "Archive",
         "archiveConfirm": "Archive client \"{name}\"?",
+        "newTagPlaceholder": "New tag...",
+        "deleteConfirm": "Delete client \"{name}\"? The client and all of its users will immediately lose all access. Services, invoices, and history are NOT deleted.",
         "columns": {
             "company": "Company",
             "status": "Status",
@@ -135,6 +191,19 @@
             "viewDocuments": "Documents",
             "createRequests": "Create requests",
             "manageAccount": "Manage account"
+        },
+        "contacts": {
+            "add": "Add contact",
+            "resetPassword": "Reset password",
+            "title": "Role",
+            "primary": "Primary contact",
+            "titles": {
+                "owner": "Owner",
+                "accountant": "Accountant",
+                "marketing": "Marketing",
+                "employee": "Employee",
+                "other": "Other"
+            }
         },
         "fields": {
             "companyName": "Company name",
@@ -227,7 +296,35 @@
         }
     },
     "tasksAdmin": {
+        "visibleToClient": "Visible to client",
+        "viewOpen": "Open",
+        "viewMine": "Mine",
+        "viewAll": "All"
+    },
+    "remindersAdmin": {
+        "viewUpcoming": "Upcoming",
+        "viewCompleted": "Completed",
+        "viewAll": "All"
+    },
+    "invoicesAdmin": {
+        "number": "Invoice #",
+        "issueDate": "Issue date",
+        "subtotal": "Subtotal",
+        "vat": "VAT",
+        "total": "Total",
+        "pdf": "PDF"
+    },
+    "documentsAdmin": {
         "visibleToClient": "Visible to client"
+    },
+    "settingsAdmin": {
+        "serviceTypesText": "The request categories the client sees when they pick a service on the request form. \"Creates task\" means the request automatically opens a matching task too.",
+        "servicesUsingType": "services"
+    },
+    "ticketCategoriesAdmin": {
+        "createsTask": "Creates task",
+        "createsTaskBadge": "Task",
+        "newCategoryPlaceholder": "New category..."
     },
     "maintenanceForm": {
         "newLog": "New maintenance entry",
@@ -284,6 +381,8 @@
         "domainDetails": "Domain details",
         "maintenanceDetails": "Maintenance details",
         "licenseDetails": "License details",
+        "ticketCategoriesTitle": "Request Categories",
+        "ticketCategoriesHint": "The categories the client will see when selecting \"{type}\" in the request form.",
         "hosting": {
             "package": "Package",
             "server": "Server",
@@ -400,6 +499,56 @@
         "completed": "Completed",
         "closed": "Closed",
         "cancelled": "Cancelled"
+    },
+    "taskStatus": {
+        "todo": "To Do",
+        "in_progress": "In Progress",
+        "blocked": "Blocked",
+        "waiting": "Waiting",
+        "completed": "Completed",
+        "cancelled": "Cancelled"
+    },
+    "invoiceStatus": {
+        "draft": "Draft",
+        "sent": "Sent",
+        "paid": "Paid",
+        "unpaid": "Unpaid",
+        "overdue": "Overdue",
+        "cancelled": "Cancelled"
+    },
+    "reminderStatus": {
+        "upcoming": "Upcoming",
+        "completed": "Completed",
+        "dismissed": "Dismissed"
+    },
+    "documentType": {
+        "invoice": "Invoice",
+        "contract": "Contract",
+        "proposal": "Proposal",
+        "quote": "Quote",
+        "technical_report": "Technical Report",
+        "credentials_document": "Credentials Document",
+        "hosting_document": "Hosting Document",
+        "domain_document": "Domain Document",
+        "maintenance_report": "Maintenance Report",
+        "agreement": "Agreement",
+        "other": "Other"
+    },
+    "dashboard": {
+        "activeServices": "Active Services",
+        "openRequests": "Open Requests",
+        "websites": "Websites",
+        "outstandingInvoices": "Outstanding Invoices",
+        "nextRenewal": "Next Renewal",
+        "recentActivity": "Recent Activity",
+        "noActivity": "No recent activity.",
+        "activeClients": "Active Clients",
+        "openTickets": "Open Tickets",
+        "tasksDueToday": "Tasks Due Today",
+        "overdueTasks": "Overdue Tasks",
+        "upcomingRenewals": "Upcoming Renewals (30d)",
+        "openTasks": "Open Tasks",
+        "openRequests": "Open Requests"
     },
     "tickets": {
         "adminTitle": "Requests",

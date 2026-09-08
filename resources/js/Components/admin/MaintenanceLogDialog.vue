@@ -48,10 +48,10 @@ function submit() {
 
 <template>
     <Dialog :open="open" @update:open="(v) => emit('update:open', v)">
-        <DialogContent class="max-h-[90vh] max-w-lg overflow-y-auto">
+        <DialogContent class="max-h-[90vh] max-w-lg overflow-y-auto xl:max-w-2xl">
             <DialogHeader><DialogTitle>{{ t('maintenanceForm.newLog') }}</DialogTitle></DialogHeader>
             <form class="space-y-3" @submit.prevent="submit">
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     <div>
                         <Label>{{ t('maintenanceForm.date') }}</Label>
                         <Input v-model="form.performed_at" type="date" />
@@ -64,7 +64,7 @@ function submit() {
 
                 <div>
                     <Label>{{ t('maintenanceForm.items') }}</Label>
-                    <div class="grid grid-cols-2 gap-2 rounded-md border p-3">
+                    <div class="grid grid-cols-1 gap-2 rounded-md border p-3 sm:grid-cols-2">
                         <label v-for="item in MAINTENANCE_ITEMS" :key="item" class="flex items-center gap-2 text-sm">
                             <Checkbox :model-value="form.items.includes(item)" @update:model-value="(v) => {
                                 if (v) form.items.push(item);

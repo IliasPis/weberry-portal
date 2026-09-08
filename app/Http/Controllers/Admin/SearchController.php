@@ -25,10 +25,10 @@ class SearchController extends Controller
 
         $clients = Client::query()
             ->where(function ($query) use ($like) {
-                $query->where('company_name', 'ilike', $like)
-                    ->orWhere('vat_number', 'ilike', $like)
-                    ->orWhere('email', 'ilike', $like)
-                    ->orWhere('phone', 'ilike', $like);
+                $query->whereLike('company_name', $like)
+                    ->orWhereLike('vat_number', $like)
+                    ->orWhereLike('email', $like)
+                    ->orWhereLike('phone', $like);
             })
             ->limit(5)
             ->get()
@@ -41,7 +41,7 @@ class SearchController extends Controller
 
         $websites = Website::query()
             ->where(function ($query) use ($like) {
-                $query->where('domain', 'ilike', $like)->orWhere('name', 'ilike', $like);
+                $query->whereLike('domain', $like)->orWhereLike('name', $like);
             })
             ->with('client:id,company_name')
             ->limit(5)
@@ -54,7 +54,7 @@ class SearchController extends Controller
             ]);
 
         $tickets = Ticket::query()
-            ->where('title', 'ilike', $like)
+            ->whereLike('title', $like)
             ->with('client:id,company_name')
             ->limit(5)
             ->get()
@@ -66,7 +66,7 @@ class SearchController extends Controller
             ]);
 
         $services = Service::query()
-            ->where('name', 'ilike', $like)
+            ->whereLike('name', $like)
             ->with('client:id,company_name')
             ->limit(5)
             ->get()
@@ -78,7 +78,7 @@ class SearchController extends Controller
             ]);
 
         $invoices = Invoice::query()
-            ->where('invoice_number', 'ilike', $like)
+            ->whereLike('invoice_number', $like)
             ->with('client:id,company_name')
             ->limit(5)
             ->get()

@@ -18,7 +18,6 @@ class TicketFactory extends Factory
     {
         return [
             'client_id' => Client::factory(),
-            'category' => 'general_question',
             'priority' => 'normal',
             'status' => 'new',
             'title' => fake()->sentence(4),

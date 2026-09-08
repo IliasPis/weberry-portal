@@ -33,9 +33,9 @@ class ServiceController extends Controller
             ->when($request->filled('search'), function ($query) use ($request) {
                 $term = '%'.$request->string('search').'%';
                 $query->where(function ($query) use ($term) {
-                    $query->where('name', 'ilike', $term)
-                        ->orWhereHas('client', fn ($q) => $q->where('company_name', 'ilike', $term))
-                        ->orWhereHas('website', fn ($q) => $q->where('domain', 'ilike', $term));
+                    $query->whereLike('name', $term)
+                        ->orWhereHas('client', fn ($q) => $q->whereLike('company_name', $term))
+                        ->orWhereHas('website', fn ($q) => $q->whereLike('domain', $term));
                 });
             })
             ->when($request->filled('status'), fn ($query) => $query->where('status', $request->string('status')))
@@ -75,7 +75,7 @@ class ServiceController extends Controller
         $service->load([
             'client:id,company_name',
             'website:id,name,domain',
-            'serviceType',
+            'serviceType.ticketCategories',
             'hostingDetail',
             'domainDetail',
             'maintenanceDetail',
@@ -97,5 +97,14 @@ class ServiceController extends Controller
         $this->detailSynchronizer->sync($service, $validated, $category);
 
         return back();
+    }
+
+    public function destroy(Request $request, Service $service): RedirectResponse
+    {
+        $this->authorize('delete', $service);
+
+        $request->boolean('also_for_client') ? $service->forceDelete() : $service->delete();
+
+        return redirect()->route('admin.services.index');
     }
 }

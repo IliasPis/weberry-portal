@@ -4,13 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreTicketMessageRequest;
 use App\Models\Ticket;
+use App\Services\ActivityLogger;
 use App\Services\FileUploadService;
+use App\Services\NotificationDispatcher;
 use App\Support\PortalRoles;
 use Illuminate\Http\RedirectResponse;
 
 class TicketMessageController extends Controller
 {
-    public function __construct(private readonly FileUploadService $fileUploadService) {}
+    public function __construct(
+        private readonly FileUploadService $fileUploadService,
+        private readonly NotificationDispatcher $notifications,
+        private readonly ActivityLogger $activity,
+    ) {}
 
     /**
      * Shared by both the admin reply/internal-note composer and the
@@ -47,6 +53,41 @@ class TicketMessageController extends Controller
 
         if ($messageType === 'admin_reply' && ! $ticket->first_response_at) {
             $ticket->update(['first_response_at' => now()]);
+        }
+
+        if ($messageType === 'client_message') {
+            $this->notifications->notifyAdmins(
+                'ticket.reply',
+                "Νέο μήνυμα στο αίτημα #{$ticket->id}",
+                $ticket->title,
+                route('admin.tickets.show', $ticket),
+            );
+            $this->activity->record(
+                $ticket->client,
+                'ticket.reply',
+                'Ο πελάτης απάντησε στο αίτημα: '.$ticket->title,
+                clientVisible: true,
+                websiteId: $ticket->website_id,
+                entityType: Ticket::class,
+                entityId: $ticket->id,
+            );
+        } elseif ($messageType === 'admin_reply') {
+            $this->notifications->notifyClient(
+                $ticket->client,
+                'ticket.reply',
+                "Νέα απάντηση στο αίτημά σας #{$ticket->id}",
+                $ticket->title,
+                route('client.requests.show', $ticket),
+            );
+            $this->activity->record(
+                $ticket->client,
+                'ticket.reply',
+                'Η ομάδα μας απάντησε στο αίτημα: '.$ticket->title,
+                clientVisible: true,
+                websiteId: $ticket->website_id,
+                entityType: Ticket::class,
+                entityId: $ticket->id,
+            );
         }
 
         return back();

@@ -35,7 +35,7 @@ const statusStyles: Record<string, string> = {
     paid: 'bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-300',
     unpaid: 'bg-orange-100 text-orange-700 dark:bg-orange-950 dark:text-orange-300',
     overdue: 'bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300',
-    pending: 'bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300',
+    sent: 'bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300',
     draft: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300',
     cancelled: 'bg-slate-100 text-slate-400 dark:bg-slate-800 dark:text-slate-500',
 };
@@ -53,11 +53,11 @@ const statusStyles: Record<string, string> = {
                     <TableHeader>
                         <TableRow>
                             <TableHead>#</TableHead>
-                            <TableHead>Website</TableHead>
-                            <TableHead>Issue date</TableHead>
-                            <TableHead>Due date</TableHead>
-                            <TableHead class="text-right">Total</TableHead>
-                            <TableHead>Status</TableHead>
+                            <TableHead>{{ t('common.website') }}</TableHead>
+                            <TableHead>{{ t('invoicesAdmin.issueDate') }}</TableHead>
+                            <TableHead>{{ t('common.dueDate') }}</TableHead>
+                            <TableHead class="text-right">{{ t('invoicesAdmin.total') }}</TableHead>
+                            <TableHead>{{ t('common.status') }}</TableHead>
                             <TableHead class="text-right" />
                         </TableRow>
                     </TableHeader>
@@ -71,7 +71,7 @@ const statusStyles: Record<string, string> = {
                             <TableCell class="text-right">€{{ invoice.total }}</TableCell>
                             <TableCell>
                                 <Badge variant="outline" :class="[statusStyles[invoice.status], 'border-transparent']">
-                                    {{ invoice.status }}
+                                    {{ t(`invoiceStatus.${invoice.status}`) }}
                                 </Badge>
                             </TableCell>
                             <TableCell class="text-right">

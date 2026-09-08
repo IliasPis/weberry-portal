@@ -34,7 +34,7 @@ const submit = () => {
     <GuestLayout>
         <Head :title="t('auth.login')" />
 
-        <div v-if="status" class="mb-4 text-sm font-medium text-green-600">
+        <div v-if="status" class="mb-4 text-sm font-medium text-green-600 dark:text-green-400">
             {{ status }}
         </div>
 
@@ -73,7 +73,7 @@ const submit = () => {
             <div class="mt-4 block">
                 <label class="flex items-center">
                     <Checkbox name="remember" v-model:checked="form.remember" />
-                    <span class="ms-2 text-sm text-gray-600">{{ t('auth.rememberMe') }}</span>
+                    <span class="ms-2 text-sm text-muted-foreground">{{ t('auth.rememberMe') }}</span>
                 </label>
             </div>
 
@@ -81,7 +81,7 @@ const submit = () => {
                 <Link
                     v-if="canResetPassword"
                     :href="route('password.request')"
-                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    class="rounded-md text-sm text-muted-foreground underline hover:text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                 >
                     {{ t('auth.forgotPassword') }}
                 </Link>

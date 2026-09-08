@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import { Head, router, useForm } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
+import PriorityBadge from '@/Components/shared/PriorityBadge.vue';
 import { Button } from '@/Components/ui/button';
 import {
     Dialog,
@@ -15,7 +16,6 @@ import { Input } from '@/Components/ui/input';
 import { Label } from '@/Components/ui/label';
 import { Textarea } from '@/Components/ui/textarea';
 import { Checkbox } from '@/Components/ui/checkbox';
-import { Badge } from '@/Components/ui/badge';
 import {
     Select,
     SelectContent,
@@ -33,14 +33,14 @@ import {
     TableHeader,
     TableRow,
 } from '@/Components/ui/table';
-import { Plus } from '@lucide/vue';
+import { Plus, Trash2 } from '@lucide/vue';
 import { formatDate } from '@/lib/format';
 
 interface ReminderRow {
     id: number;
     title: string;
     remind_at: string;
-    priority: string;
+    priority: 'low' | 'normal' | 'high' | 'urgent';
     status: string;
     client: { id: number; company_name: string } | null;
     assigned_to: { id: number; name: string } | null;
@@ -86,6 +86,11 @@ function toggleComplete(reminder: ReminderRow) {
         { preserveScroll: true },
     );
 }
+
+function destroyReminder(reminder: ReminderRow) {
+    if (!confirm(t('common.deleteConfirmBody', { item: reminder.title }))) return;
+    router.delete(route('admin.reminders.destroy', reminder.id), { preserveScroll: true });
+}
 </script>
 
 <template>
@@ -99,11 +104,13 @@ function toggleComplete(reminder: ReminderRow) {
             </div>
 
             <Tabs :model-value="view" @update:model-value="(v) => changeView(String(v))">
-                <TabsList>
-                    <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
-                    <TabsTrigger value="completed">Completed</TabsTrigger>
-                    <TabsTrigger value="all">All</TabsTrigger>
-                </TabsList>
+                <div class="overflow-x-auto">
+                    <TabsList class="justify-start">
+                        <TabsTrigger value="upcoming">{{ t('remindersAdmin.viewUpcoming') }}</TabsTrigger>
+                        <TabsTrigger value="completed">{{ t('remindersAdmin.viewCompleted') }}</TabsTrigger>
+                        <TabsTrigger value="all">{{ t('remindersAdmin.viewAll') }}</TabsTrigger>
+                    </TabsList>
+                </div>
             </Tabs>
 
             <div class="rounded-md border bg-background">
@@ -111,15 +118,16 @@ function toggleComplete(reminder: ReminderRow) {
                     <TableHeader>
                         <TableRow>
                             <TableHead />
-                            <TableHead>Title</TableHead>
-                            <TableHead>Client</TableHead>
-                            <TableHead>Date</TableHead>
+                            <TableHead>{{ t('common.title') }}</TableHead>
+                            <TableHead>{{ t('common.client') }}</TableHead>
+                            <TableHead>{{ t('common.date') }}</TableHead>
                             <TableHead>{{ t('common.priority') }}</TableHead>
-                            <TableHead>Created by</TableHead>
+                            <TableHead>{{ t('common.createdBy') }}</TableHead>
+                            <TableHead class="text-right">{{ t('common.actions') }}</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        <TableEmpty v-if="reminders.data.length === 0" :colspan="6">—</TableEmpty>
+                        <TableEmpty v-if="reminders.data.length === 0" :colspan="7">—</TableEmpty>
                         <TableRow v-for="reminder in reminders.data" :key="reminder.id">
                             <TableCell>
                                 <Checkbox :model-value="reminder.status === 'completed'" @update:model-value="toggleComplete(reminder)" />
@@ -129,8 +137,13 @@ function toggleComplete(reminder: ReminderRow) {
                             </TableCell>
                             <TableCell class="text-sm text-muted-foreground">{{ reminder.client?.company_name ?? '—' }}</TableCell>
                             <TableCell class="text-sm text-muted-foreground">{{ formatDate(reminder.remind_at, locale) }}</TableCell>
-                            <TableCell><Badge variant="outline">{{ reminder.priority }}</Badge></TableCell>
+                            <TableCell><PriorityBadge :priority="reminder.priority" /></TableCell>
                             <TableCell class="text-sm text-muted-foreground">{{ reminder.created_by.name }}</TableCell>
+                            <TableCell class="text-right">
+                                <Button variant="ghost" size="sm" class="text-destructive hover:text-destructive" @click="destroyReminder(reminder)">
+                                    <Trash2 class="h-4 w-4" />
+                                </Button>
+                            </TableCell>
                         </TableRow>
                     </TableBody>
                 </Table>
@@ -142,16 +155,16 @@ function toggleComplete(reminder: ReminderRow) {
                 <DialogHeader><DialogTitle>{{ t('common.create') }}</DialogTitle></DialogHeader>
                 <form class="space-y-3" @submit.prevent="submit">
                     <div>
-                        <Label>Title</Label>
+                        <Label>{{ t('common.title') }}</Label>
                         <Input v-model="form.title" />
                     </div>
                     <div>
-                        <Label>{{ t('services.fields.notesClient') }}</Label>
+                        <Label>{{ t('common.description') }}</Label>
                         <Textarea v-model="form.description" rows="2" />
                     </div>
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <Label>Date</Label>
+                            <Label>{{ t('common.date') }}</Label>
                             <Input v-model="form.remind_at" type="date" />
                         </div>
                         <div>

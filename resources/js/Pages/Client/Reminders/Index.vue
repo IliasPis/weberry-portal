@@ -60,8 +60,8 @@ function toggleComplete(reminder: ReminderItem) {
 
             <Card v-if="showForm">
                 <CardContent class="space-y-3 p-4">
-                    <Input v-model="form.title" placeholder="Title" />
-                    <Textarea v-model="form.description" rows="2" placeholder="..." />
+                    <Input v-model="form.title" :placeholder="t('common.title')" />
+                    <Textarea v-model="form.description" rows="2" :placeholder="t('common.description')" />
                     <Input v-model="form.remind_at" type="date" />
                     <div class="flex justify-end">
                         <Button :disabled="form.processing || !form.title || !form.remind_at" @click="submit">
@@ -82,7 +82,7 @@ function toggleComplete(reminder: ReminderItem) {
                             <p v-if="reminder.description" class="text-sm text-muted-foreground">{{ reminder.description }}</p>
                             <p class="text-xs text-muted-foreground">{{ formatDate(reminder.remind_at, locale) }}</p>
                         </div>
-                        <Badge variant="outline">{{ reminder.status }}</Badge>
+                        <Badge variant="outline">{{ t(`reminderStatus.${reminder.status}`) }}</Badge>
                     </CardContent>
                 </Card>
                 <p v-if="reminders.length === 0" class="py-8 text-center text-sm text-muted-foreground">—</p>

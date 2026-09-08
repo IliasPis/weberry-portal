@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[Fillable([
     'created_by_user_id', 'owner_type', 'client_id', 'website_id', 'service_id', 'ticket_id', 'title',
@@ -12,6 +13,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 ])]
 class Reminder extends Model
 {
+    use SoftDeletes;
+
     protected function casts(): array
     {
         return [
@@ -26,7 +29,7 @@ class Reminder extends Model
 
     public function client(): BelongsTo
     {
-        return $this->belongsTo(Client::class);
+        return $this->belongsTo(Client::class)->withTrashed();
     }
 
     public function website(): BelongsTo
