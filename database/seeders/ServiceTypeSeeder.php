@@ -29,15 +29,14 @@ class ServiceTypeSeeder extends Seeder
     private function seedServiceTypes(): array
     {
         $catalog = [
-            ['name' => 'Ολοκληρωμένη Υποστήριξη WordPress', 'category' => 'total_support_wordpress'],
-            ['name' => 'Ολοκληρωμένη Υποστήριξη WooCommerce', 'category' => 'total_support_woocommerce'],
-            ['name' => 'Υποστήριξη B2B', 'category' => 'total_support_b2b'],
-            ['name' => 'Υποστήριξη Custom Plugin', 'category' => 'total_support_custom_plugin'],
+            ['name' => 'Total Support WordPress', 'category' => 'total_support_wordpress'],
+            ['name' => 'Total Support WooCommerce', 'category' => 'total_support_woocommerce'],
+            ['name' => 'Total Support B2B', 'category' => 'total_support_b2b'],
         ];
 
         $types = [];
         foreach ($catalog as $row) {
-            $types[$row['category']] = ServiceType::query()->firstOrCreate(
+            $types[$row['category']] = ServiceType::query()->updateOrCreate(
                 ['category' => $row['category']],
                 $row,
             );
@@ -89,15 +88,6 @@ class ServiceTypeSeeder extends Seeder
                 ['name' => 'Ελάχιστες ποσότητες παραγγελίας', 'creates_task' => true],
                 ['name' => 'Έγκριση λογαριασμού πελάτη', 'creates_task' => true],
                 ['name' => 'Ενσωμάτωση ERP / παραγγελιοληψίας', 'creates_task' => true],
-                ['name' => 'Γενική ερώτηση υποστήριξης', 'creates_task' => false],
-            ],
-            'total_support_custom_plugin' => [
-                ['name' => 'Σφάλμα λειτουργίας (bug)', 'creates_task' => true],
-                ['name' => 'Νέα λειτουργία / αίτημα βελτίωσης', 'creates_task' => true],
-                ['name' => 'Ασυμβατότητα μετά από ενημέρωση WordPress / theme', 'creates_task' => true],
-                ['name' => 'Βοήθεια ρύθμισης / παραμετροποίησης', 'creates_task' => true],
-                ['name' => 'Ενεργοποίηση / άδεια χρήσης (license)', 'creates_task' => true],
-                ['name' => 'Ενημέρωση σε νέα έκδοση', 'creates_task' => true],
                 ['name' => 'Γενική ερώτηση υποστήριξης', 'creates_task' => false],
             ],
         ];

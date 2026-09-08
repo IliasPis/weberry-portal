@@ -314,7 +314,7 @@ function submit() {
                     <div class="col-span-2"><Label>{{ t('services.domain.nameservers') }}</Label><Textarea v-model="form.domain_nameservers" rows="2" /></div>
                 </template>
 
-                <template v-else-if="['maintenance', 'woocommerce_maintenance', 'total_support_wordpress', 'total_support_woocommerce', 'total_support_b2b', 'total_support_custom_plugin'].includes(selectedCategory ?? '')">
+                <template v-else-if="['maintenance', 'woocommerce_maintenance', 'total_support_wordpress', 'total_support_woocommerce', 'total_support_b2b'].includes(selectedCategory ?? '')">
                     <div class="col-span-2 text-sm font-medium text-muted-foreground">{{ t('services.maintenanceDetails') }}</div>
                     <div><Label>{{ t('services.maintenance.plan') }}</Label><Input v-model="form.maintenance_plan" /></div>
                     <div><Label>{{ t('services.maintenance.sla') }}</Label><Input v-model="form.maintenance_sla" /></div>
