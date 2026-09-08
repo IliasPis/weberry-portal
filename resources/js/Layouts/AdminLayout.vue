@@ -5,6 +5,7 @@ import LocaleSwitcher from '@/Components/LocaleSwitcher.vue';
 import NotificationBell from '@/Components/NotificationBell.vue';
 import UserMenu from '@/Components/UserMenu.vue';
 import GlobalSearch from '@/Components/admin/GlobalSearch.vue';
+import weberryMark from '@/images/brand/weberry-mark.png';
 import { adminNavItems } from '@/lib/adminNav';
 import {
     Sidebar,
@@ -28,7 +29,7 @@ const { t } = useI18n();
         <Sidebar collapsible="icon">
             <SidebarHeader class="px-3 py-3">
                 <Link :href="route('admin.dashboard')" class="flex items-center gap-2 font-semibold tracking-tight">
-                    <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded bg-primary text-xs text-primary-foreground">W</span>
+                    <img :src="weberryMark" alt="Weberry" class="h-7 w-7 shrink-0" />
                     <span class="group-data-[collapsible=icon]:hidden">Weberry Admin</span>
                 </Link>
             </SidebarHeader>
