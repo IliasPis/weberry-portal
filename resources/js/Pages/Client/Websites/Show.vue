@@ -19,6 +19,14 @@ interface ServiceRow {
     client_price: string | number | null;
 }
 
+interface MaintenanceLogRow {
+    id: number;
+    performed_at: string;
+    duration_minutes: number | null;
+    notes_client: string | null;
+    items: { item_key: string; checked: boolean }[];
+}
+
 interface WebsiteDetail {
     id: number;
     name: string;
@@ -32,6 +40,7 @@ interface WebsiteDetail {
     client_visible_notes: string | null;
     services: ServiceRow[];
     open_requests_count?: number;
+    maintenance_logs: MaintenanceLogRow[];
 }
 
 defineProps<{ website: WebsiteDetail }>();
@@ -104,6 +113,34 @@ const { t, locale } = useI18n();
                                 <p class="font-medium">€{{ service.client_price }}</p>
                                 <ExpirationBadge :date="service.expiration_date" />
                             </div>
+                        </CardContent>
+                    </Card>
+                </div>
+            </div>
+
+            <div>
+                <h2 class="mb-3 text-lg font-semibold">{{ t('clientWebsites.maintenanceHistory') }}</h2>
+                <div v-if="website.maintenance_logs.length === 0" class="text-sm text-muted-foreground">
+                    {{ t('clientWebsites.noMaintenance') }}
+                </div>
+                <div v-else class="space-y-3">
+                    <Card v-for="log in website.maintenance_logs" :key="log.id">
+                        <CardHeader class="pb-2">
+                            <CardTitle class="flex items-center justify-between text-sm font-medium">
+                                <span>{{ formatDate(log.performed_at, locale) }}</span>
+                                <span v-if="log.duration_minutes" class="text-xs font-normal text-muted-foreground">
+                                    {{ t('clientWebsites.duration') }}: {{ log.duration_minutes }}'
+                                </span>
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent class="pt-0">
+                            <ul class="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
+                                <li v-for="item in log.items.filter((i) => i.checked)" :key="item.item_key" class="flex items-center gap-1.5">
+                                    <span class="h-1.5 w-1.5 rounded-full bg-green-600" />
+                                    {{ t(`maintenanceItem.${item.item_key}`) }}
+                                </li>
+                            </ul>
+                            <p v-if="log.notes_client" class="mt-2 text-sm text-muted-foreground">{{ log.notes_client }}</p>
                         </CardContent>
                     </Card>
                 </div>

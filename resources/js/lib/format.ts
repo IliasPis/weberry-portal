@@ -15,3 +15,11 @@ export function formatDate(value: string | null | undefined, locale: string = 'e
 
     return format(parseISO(value), 'dd/MM/yyyy', { locale: dateLocales[resolved] });
 }
+
+export function formatDateTime(value: string | null | undefined, locale: string = 'el'): string {
+    if (!value) return '—';
+
+    const resolved = locale in dateLocales ? (locale as keyof typeof dateLocales) : 'el';
+
+    return format(parseISO(value), 'dd/MM/yyyy HH:mm', { locale: dateLocales[resolved] });
+}

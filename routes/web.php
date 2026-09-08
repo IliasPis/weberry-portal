@@ -3,6 +3,7 @@
 use App\Http\Controllers\DashboardRedirectController;
 use App\Http\Controllers\FileDownloadController;
 use App\Http\Controllers\LocaleController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -22,6 +23,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('/files/{file}/download', FileDownloadController::class)->name('files.download');
+
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/{notification}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
 });
 
 require __DIR__.'/auth.php';

@@ -52,4 +52,39 @@ class Client extends Model
     {
         return $this->belongsToMany(Tag::class, 'client_tags');
     }
+
+    public function tickets(): HasMany
+    {
+        return $this->hasMany(Ticket::class);
+    }
+
+    public function notes(): HasMany
+    {
+        return $this->hasMany(Note::class);
+    }
+
+    public function reminders(): HasMany
+    {
+        return $this->hasMany(Reminder::class);
+    }
+
+    public function tasks(): HasMany
+    {
+        return $this->hasMany(Task::class);
+    }
+
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class);
+    }
+
+    public function documents(): HasMany
+    {
+        return $this->hasMany(Document::class);
+    }
+
+    public function activityLogs(): HasMany
+    {
+        return $this->hasMany(ActivityLog::class);
+    }
 }

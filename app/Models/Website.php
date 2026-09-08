@@ -47,4 +47,19 @@ class Website extends Model
     {
         return $this->tickets()->whereIn('status', TicketOptions::OPEN_STATUSES);
     }
+
+    public function maintenanceLogs(): HasMany
+    {
+        return $this->hasMany(MaintenanceLog::class)->orderByDesc('performed_at');
+    }
+
+    public function documents(): HasMany
+    {
+        return $this->hasMany(Document::class);
+    }
+
+    public function notes(): HasMany
+    {
+        return $this->hasMany(Note::class);
+    }
 }

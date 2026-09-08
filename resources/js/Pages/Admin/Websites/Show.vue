@@ -4,12 +4,14 @@ import { Head, Link } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import WebsiteFormDialog, { type WebsiteRecord } from '@/Components/admin/WebsiteFormDialog.vue';
+import MaintenanceLogDialog from '@/Components/admin/MaintenanceLogDialog.vue';
+import NotePanel from '@/Components/admin/NotePanel.vue';
 import ExpirationBadge from '@/Components/shared/ExpirationBadge.vue';
 import { Badge } from '@/Components/ui/badge';
 import { Button } from '@/Components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/Components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Components/ui/tabs';
-import { ArrowLeft, ExternalLink } from '@lucide/vue';
+import { ArrowLeft, ExternalLink, Plus } from '@lucide/vue';
 import { formatDate } from '@/lib/format';
 
 interface ServiceRow {
@@ -21,15 +23,37 @@ interface ServiceRow {
     service_type: { name: string } | null;
 }
 
+interface MaintenanceLogRow {
+    id: number;
+    performed_at: string;
+    duration_minutes: number | null;
+    notes_client: string | null;
+    notes_internal: string | null;
+    client_visible: boolean;
+    items: { item_key: string; checked: boolean }[];
+}
+
+interface NoteRow {
+    id: number;
+    body: string;
+    visibility: 'internal' | 'shared' | 'system';
+    created_at: string;
+    author: { id: number; name: string } | null;
+}
+
 interface WebsiteDetail extends WebsiteRecord {
+    id: number;
     client: { id: number; company_name: string };
     services: ServiceRow[];
+    maintenance_logs: MaintenanceLogRow[];
+    notes: NoteRow[];
 }
 
 const props = defineProps<{ website: WebsiteDetail }>();
 
 const { t, locale } = useI18n();
 const dialogOpen = ref(false);
+const maintenanceDialogOpen = ref(false);
 </script>
 
 <template>
@@ -64,6 +88,8 @@ const dialogOpen = ref(false);
                     <TabsTrigger value="overview">{{ t('websites.tabs.overview') }}</TabsTrigger>
                     <TabsTrigger value="technical">{{ t('websites.tabs.technical') }}</TabsTrigger>
                     <TabsTrigger value="services">{{ t('websites.tabs.services') }} ({{ website.services.length }})</TabsTrigger>
+                    <TabsTrigger value="maintenance">{{ t('websites.tabs.maintenance') }} ({{ website.maintenance_logs.length }})</TabsTrigger>
+                    <TabsTrigger value="notes">{{ t('websites.tabs.notes') }} ({{ website.notes.length }})</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="overview" class="grid gap-4 sm:grid-cols-2">
@@ -138,9 +164,48 @@ const dialogOpen = ref(false);
                         </Card>
                     </div>
                 </TabsContent>
+
+                <TabsContent value="maintenance" class="space-y-3">
+                    <div class="flex justify-end">
+                        <Button size="sm" @click="maintenanceDialogOpen = true">
+                            <Plus class="h-4 w-4" />
+                            {{ t('maintenanceForm.newLog') }}
+                        </Button>
+                    </div>
+                    <Card v-for="log in website.maintenance_logs" :key="log.id">
+                        <CardHeader class="pb-2">
+                            <CardTitle class="flex items-center justify-between text-sm font-medium">
+                                <span>{{ formatDate(log.performed_at, locale) }}</span>
+                                <Badge variant="outline">{{ log.client_visible ? t('common.yes') : t('common.no') }}</Badge>
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent class="pt-0">
+                            <ul class="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
+                                <li v-for="item in log.items" :key="item.item_key" class="flex items-center gap-1.5">
+                                    <span class="h-1.5 w-1.5 rounded-full bg-green-600" />
+                                    {{ t(`maintenanceItem.${item.item_key}`) }}
+                                </li>
+                            </ul>
+                            <p v-if="log.notes_client" class="mt-2 text-sm">
+                                <span class="font-medium text-muted-foreground">{{ t('maintenanceForm.notesClient') }}:</span>
+                                {{ log.notes_client }}
+                            </p>
+                            <p v-if="log.notes_internal" class="mt-2 text-sm text-amber-700 dark:text-amber-300">
+                                <span class="font-medium">{{ t('maintenanceForm.notesInternal') }}:</span>
+                                {{ log.notes_internal }}
+                            </p>
+                        </CardContent>
+                    </Card>
+                    <p v-if="website.maintenance_logs.length === 0" class="py-4 text-center text-sm text-muted-foreground">—</p>
+                </TabsContent>
+
+                <TabsContent value="notes">
+                    <NotePanel :notes="website.notes" :client-id="website.client.id" :website-id="website.id" />
+                </TabsContent>
             </Tabs>
         </div>
 
         <WebsiteFormDialog v-model:open="dialogOpen" :website="website" :clients="[website.client]" :locked-client-id="website.client.id" />
+        <MaintenanceLogDialog v-model:open="maintenanceDialogOpen" :website-id="website.id" />
     </AdminLayout>
 </template>

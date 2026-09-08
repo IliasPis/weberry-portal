@@ -59,6 +59,8 @@ class WebsiteController extends Controller
         $website->load([
             'client:id,company_name',
             'services' => fn ($query) => $query->with('serviceType')->orderBy('expiration_date'),
+            'maintenanceLogs.items',
+            'notes' => fn ($query) => $query->with('author:id,name')->orderByDesc('created_at'),
         ]);
 
         return Inertia::render('Admin/Websites/Show', [

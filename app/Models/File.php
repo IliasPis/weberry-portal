@@ -19,4 +19,14 @@ class File extends Model
     {
         return $this->hasOne(TicketAttachment::class);
     }
+
+    public function document(): HasOne
+    {
+        return $this->hasOne(Document::class);
+    }
+
+    public function invoice(): HasOne
+    {
+        return $this->hasOne(Invoice::class, 'pdf_file_id');
+    }
 }

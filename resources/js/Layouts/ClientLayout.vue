@@ -2,6 +2,7 @@
 import { Link } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 import LocaleSwitcher from '@/Components/LocaleSwitcher.vue';
+import NotificationBell from '@/Components/NotificationBell.vue';
 import UserMenu from '@/Components/UserMenu.vue';
 import { clientNavItems } from '@/lib/clientNav';
 
@@ -30,6 +31,7 @@ const { t } = useI18n();
 
                 <div class="ml-auto flex items-center gap-2">
                     <LocaleSwitcher />
+                    <NotificationBell />
                     <UserMenu />
                 </div>
             </div>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Support\PortalRoles;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -29,12 +30,16 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $user = $request->user();
+
         return [
             ...parent::share($request),
             'auth' => [
-                'user' => $request->user(),
+                'user' => $user,
+                'is_admin_side' => $user?->hasAnyRole(PortalRoles::ADMIN_SIDE) ?? false,
             ],
             'locale' => app()->getLocale(),
+            'unread_notifications_count' => $user?->unreadNotifications()->count() ?? 0,
         ];
     }
 }

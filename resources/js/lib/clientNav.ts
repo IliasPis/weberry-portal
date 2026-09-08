@@ -1,4 +1,15 @@
-import { Globe, LayoutDashboard, MessageSquare, PackageCheck } from '@lucide/vue';
+import {
+    Bell,
+    CheckSquare,
+    FileText,
+    Globe,
+    LayoutDashboard,
+    MessageSquare,
+    PackageCheck,
+    Receipt,
+    StickyNote,
+    UserCog,
+} from '@lucide/vue';
 import type { Component } from 'vue';
 
 export interface ClientNavItem {
@@ -9,8 +20,7 @@ export interface ClientNavItem {
 }
 
 /**
- * Same data-driven approach as lib/adminNav.ts - each future client-portal
- * module (Invoices, Documents, ...) adds one entry here.
+ * Same data-driven approach as lib/adminNav.ts.
  */
 export const clientNavItems: ClientNavItem[] = [
     {
@@ -36,5 +46,41 @@ export const clientNavItems: ClientNavItem[] = [
         routeName: 'client.requests.index',
         activePrefix: 'client.requests.*',
         icon: MessageSquare,
+    },
+    {
+        titleKey: 'nav.client.invoices',
+        routeName: 'client.invoices.index',
+        activePrefix: 'client.invoices.*',
+        icon: Receipt,
+    },
+    {
+        titleKey: 'nav.client.documents',
+        routeName: 'client.documents.index',
+        activePrefix: 'client.documents.*',
+        icon: FileText,
+    },
+    {
+        titleKey: 'nav.client.tasks',
+        routeName: 'client.tasks.index',
+        activePrefix: 'client.tasks.*',
+        icon: CheckSquare,
+    },
+    {
+        titleKey: 'nav.client.notes',
+        routeName: 'client.notes.index',
+        activePrefix: 'client.notes.*',
+        icon: StickyNote,
+    },
+    {
+        titleKey: 'nav.client.reminders',
+        routeName: 'client.reminders.index',
+        activePrefix: 'client.reminders.*',
+        icon: Bell,
+    },
+    {
+        titleKey: 'nav.client.account',
+        routeName: 'profile.edit',
+        activePrefix: 'profile.*',
+        icon: UserCog,
     },
 ];

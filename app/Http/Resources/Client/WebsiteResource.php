@@ -32,6 +32,7 @@ class WebsiteResource extends JsonResource
             'services' => ServiceResource::collection($this->whenLoaded('services')),
             'services_count' => $this->whenCounted('services'),
             'open_requests_count' => $this->whenCounted('openTickets'),
+            'maintenance_logs' => MaintenanceLogResource::collection($this->whenLoaded('maintenanceLogs')),
         ];
     }
 }

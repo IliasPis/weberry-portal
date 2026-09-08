@@ -7,6 +7,8 @@ use App\Http\Requests\Admin\StoreClientRequest;
 use App\Http\Requests\Admin\UpdateClientRequest;
 use App\Models\Client;
 use App\Models\ServiceType;
+use App\Models\Tag;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -61,11 +63,22 @@ class ClientController extends Controller
         $client->load([
             'websites' => fn ($query) => $query->orderBy('name'),
             'services' => fn ($query) => $query->with('serviceType')->orderBy('expiration_date'),
+            'tickets' => fn ($query) => $query->with('assignedTo:id,name')->orderByDesc('created_at'),
+            'notes' => fn ($query) => $query->with('author:id,name', 'website:id,domain')->orderByDesc('created_at'),
+            'reminders' => fn ($query) => $query->with('assignedTo:id,name')->orderBy('remind_at'),
+            'tasks' => fn ($query) => $query->with('assignedTo:id,name')->orderByDesc('created_at'),
+            'invoices' => fn ($query) => $query->orderByDesc('issue_date'),
+            'documents' => fn ($query) => $query->with('file', 'uploadedBy:id,name')->orderByDesc('created_at'),
+            'activityLogs' => fn ($query) => $query->with('actor:id,name')->orderByDesc('created_at')->limit(50),
+            'contacts' => fn ($query) => $query->with('user:id,name,email'),
+            'tags',
         ]);
 
         return Inertia::render('Admin/Clients/Show', [
             'client' => $client,
             'serviceTypes' => ServiceType::query()->orderBy('name')->get(['id', 'name', 'category']),
+            'assignableUsers' => User::role(['super_admin', 'admin', 'staff'])->get(['id', 'name']),
+            'allTags' => Tag::query()->orderBy('name')->get(['id', 'name', 'color']),
         ]);
     }
 
@@ -81,6 +94,25 @@ class ClientController extends Controller
         $this->authorize('delete', $client);
 
         $client->update(['status' => 'archived']);
+
+        return back();
+    }
+
+    public function attachTag(Request $request, Client $client): RedirectResponse
+    {
+        $this->authorize('update', $client);
+
+        $validated = $request->validate(['tag_id' => ['required', 'exists:tags,id']]);
+        $client->tags()->syncWithoutDetaching([$validated['tag_id']]);
+
+        return back();
+    }
+
+    public function detachTag(Client $client, Tag $tag): RedirectResponse
+    {
+        $this->authorize('update', $client);
+
+        $client->tags()->detach($tag->id);
 
         return back();
     }

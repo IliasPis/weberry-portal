@@ -30,8 +30,11 @@ class WebsiteController extends Controller
     {
         $this->authorize('view', $website);
 
-        $website->load(['services.serviceType', 'services.website'])
-            ->loadCount('openTickets');
+        $website->load([
+            'services.serviceType',
+            'services.website',
+            'maintenanceLogs' => fn ($query) => $query->where('client_visible', true)->with('items'),
+        ])->loadCount('openTickets');
 
         return Inertia::render('Client/Websites/Show', [
             'website' => new WebsiteResource($website),

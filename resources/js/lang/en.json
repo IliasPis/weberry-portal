@@ -17,6 +17,7 @@
         "back": "Back",
         "next": "Next",
         "create": "Create",
+        "add": "Add",
         "viewAll": "View all",
         "logout": "Log out",
         "welcome": "Welcome, {name}"
@@ -59,6 +60,7 @@
             "websites": "Websites",
             "requests": "Requests",
             "tasks": "Tasks",
+            "reminders": "Reminders",
             "calendar": "Calendar",
             "renewals": "Renewals",
             "services": "Services",
@@ -76,6 +78,7 @@
             "requests": "Requests",
             "invoices": "Invoices",
             "documents": "Documents",
+            "tasks": "Tasks",
             "notes": "Notes",
             "reminders": "Reminders",
             "notifications": "Notifications",
@@ -115,7 +118,23 @@
         "tabs": {
             "overview": "Overview",
             "websites": "Websites",
-            "services": "Services"
+            "services": "Services",
+            "requests": "Requests",
+            "tasks": "Tasks",
+            "notes": "Notes",
+            "reminders": "Reminders",
+            "invoices": "Invoices",
+            "documents": "Documents",
+            "activity": "Activity",
+            "contacts": "Contacts"
+        },
+        "contactPerms": {
+            "viewBilling": "Billing",
+            "viewInvoices": "Invoices",
+            "viewRequests": "Requests",
+            "viewDocuments": "Documents",
+            "createRequests": "Create requests",
+            "manageAccount": "Manage account"
         },
         "fields": {
             "companyName": "Company name",
@@ -202,8 +221,31 @@
         "tabs": {
             "overview": "Overview",
             "technical": "Technical",
-            "services": "Services"
+            "services": "Services",
+            "maintenance": "Maintenance",
+            "notes": "Notes"
         }
+    },
+    "tasksAdmin": {
+        "visibleToClient": "Visible to client"
+    },
+    "maintenanceForm": {
+        "newLog": "New maintenance entry",
+        "date": "Date",
+        "duration": "Duration (minutes)",
+        "notesClient": "Notes to client",
+        "notesInternal": "Internal notes",
+        "visibleToClient": "Visible to client",
+        "items": "Tasks performed"
+    },
+    "notesAdmin": {
+        "newNote": "New note",
+        "visibility": "Visibility",
+        "internal": "Internal",
+        "shared": "Shared with client",
+        "internalBadge": "INTERNAL",
+        "sharedBadge": "SHARED WITH CLIENT",
+        "fromClient": "From the client"
     },
     "services": {
         "title": "Services",
@@ -267,6 +309,22 @@
             "status": "License status"
         }
     },
+    "search": {
+        "placeholder": "Search clients, websites, requests...",
+        "noResults": "No results found.",
+        "type": {
+            "client": "Client",
+            "website": "Website",
+            "ticket": "Request",
+            "service": "Service",
+            "invoice": "Invoice"
+        }
+    },
+    "notifications": {
+        "title": "Notifications",
+        "empty": "No notifications.",
+        "markAllRead": "Mark all as read"
+    },
     "clientWebsites": {
         "title": "My Websites",
         "noResults": "You don't have any websites yet.",
@@ -277,7 +335,28 @@
         "openRequests": "Open requests",
         "services": "Services",
         "noServices": "No services on this website.",
-        "newRequestForSite": "New request for this website"
+        "newRequestForSite": "New request for this website",
+        "maintenanceHistory": "Maintenance History",
+        "noMaintenance": "No maintenance recorded yet.",
+        "duration": "Duration"
+    },
+    "maintenanceItem": {
+        "backup_created": "Backup created",
+        "wp_updated": "WordPress updated",
+        "woo_updated": "WooCommerce updated",
+        "plugins_updated": "Plugins updated",
+        "theme_updated": "Theme updated",
+        "db_optimized": "Database optimized",
+        "security_scan": "Security scan",
+        "malware_scan": "Malware scan",
+        "broken_links_checked": "Broken links checked",
+        "forms_tested": "Forms tested",
+        "checkout_tested": "Checkout tested",
+        "cache_cleared": "Cache cleared",
+        "performance_checked": "Performance checked",
+        "ssl_checked": "SSL checked",
+        "uptime_checked": "Uptime checked",
+        "other": "Other"
     },
     "clientServices": {
         "title": "My Services",

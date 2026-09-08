@@ -17,6 +17,7 @@
         "back": "Πίσω",
         "next": "Επόμενο",
         "create": "Δημιουργία",
+        "add": "Προσθήκη",
         "viewAll": "Προβολή όλων",
         "logout": "Αποσύνδεση",
         "welcome": "Καλωσήρθες, {name}"
@@ -59,6 +60,7 @@
             "websites": "Ιστότοποι",
             "requests": "Αιτήματα",
             "tasks": "Εργασίες",
+            "reminders": "Υπενθυμίσεις",
             "calendar": "Ημερολόγιο",
             "renewals": "Ανανεώσεις",
             "services": "Υπηρεσίες",
@@ -76,6 +78,7 @@
             "requests": "Αιτήματα",
             "invoices": "Τιμολόγια",
             "documents": "Έγγραφα",
+            "tasks": "Εργασίες",
             "notes": "Σημειώσεις",
             "reminders": "Υπενθυμίσεις",
             "notifications": "Ειδοποιήσεις",
@@ -115,7 +118,23 @@
         "tabs": {
             "overview": "Επισκόπηση",
             "websites": "Websites",
-            "services": "Υπηρεσίες"
+            "services": "Υπηρεσίες",
+            "requests": "Αιτήματα",
+            "tasks": "Εργασίες",
+            "notes": "Σημειώσεις",
+            "reminders": "Υπενθυμίσεις",
+            "invoices": "Τιμολόγια",
+            "documents": "Έγγραφα",
+            "activity": "Δραστηριότητα",
+            "contacts": "Επαφές"
+        },
+        "contactPerms": {
+            "viewBilling": "Χρέωση",
+            "viewInvoices": "Τιμολόγια",
+            "viewRequests": "Αιτήματα",
+            "viewDocuments": "Έγγραφα",
+            "createRequests": "Δημιουργία αιτημάτων",
+            "manageAccount": "Διαχείριση λογαριασμού"
         },
         "fields": {
             "companyName": "Επωνυμία",
@@ -202,8 +221,31 @@
         "tabs": {
             "overview": "Επισκόπηση",
             "technical": "Τεχνικά",
-            "services": "Υπηρεσίες"
+            "services": "Υπηρεσίες",
+            "maintenance": "Συντήρηση",
+            "notes": "Σημειώσεις"
         }
+    },
+    "tasksAdmin": {
+        "visibleToClient": "Ορατή στον πελάτη"
+    },
+    "maintenanceForm": {
+        "newLog": "Νέα καταχώρηση συντήρησης",
+        "date": "Ημερομηνία",
+        "duration": "Διάρκεια (λεπτά)",
+        "notesClient": "Σημειώσεις προς πελάτη",
+        "notesInternal": "Εσωτερικές σημειώσεις",
+        "visibleToClient": "Ορατό στον πελάτη",
+        "items": "Εργασίες που έγιναν"
+    },
+    "notesAdmin": {
+        "newNote": "Νέα σημείωση",
+        "visibility": "Ορατότητα",
+        "internal": "Εσωτερική",
+        "shared": "Κοινή με τον πελάτη",
+        "internalBadge": "ΕΣΩΤΕΡΙΚΗ",
+        "sharedBadge": "ΚΟΙΝΗ ΜΕ ΠΕΛΑΤΗ",
+        "fromClient": "Από τον πελάτη"
     },
     "services": {
         "title": "Υπηρεσίες",
@@ -267,6 +309,22 @@
             "status": "Κατάσταση άδειας"
         }
     },
+    "search": {
+        "placeholder": "Αναζήτηση πελατών, websites, αιτημάτων...",
+        "noResults": "Δεν βρέθηκαν αποτελέσματα.",
+        "type": {
+            "client": "Πελάτης",
+            "website": "Website",
+            "ticket": "Αίτημα",
+            "service": "Υπηρεσία",
+            "invoice": "Τιμολόγιο"
+        }
+    },
+    "notifications": {
+        "title": "Ειδοποιήσεις",
+        "empty": "Δεν υπάρχουν ειδοποιήσεις.",
+        "markAllRead": "Σήμανση όλων ως αναγνωσμένα"
+    },
     "clientWebsites": {
         "title": "Οι Ιστότοποί μου",
         "noResults": "Δεν έχετε ακόμα websites.",
@@ -277,7 +335,28 @@
         "openRequests": "Ανοιχτά αιτήματα",
         "services": "Υπηρεσίες",
         "noServices": "Δεν υπάρχουν υπηρεσίες σε αυτό το website.",
-        "newRequestForSite": "Νέο αίτημα για αυτό το website"
+        "newRequestForSite": "Νέο αίτημα για αυτό το website",
+        "maintenanceHistory": "Ιστορικό Συντήρησης",
+        "noMaintenance": "Δεν έχει καταγραφεί συντήρηση ακόμα.",
+        "duration": "Διάρκεια"
+    },
+    "maintenanceItem": {
+        "backup_created": "Δημιουργία backup",
+        "wp_updated": "Ενημέρωση WordPress",
+        "woo_updated": "Ενημέρωση WooCommerce",
+        "plugins_updated": "Ενημέρωση plugins",
+        "theme_updated": "Ενημέρωση theme",
+        "db_optimized": "Βελτιστοποίηση βάσης δεδομένων",
+        "security_scan": "Έλεγχος ασφαλείας",
+        "malware_scan": "Έλεγχος για malware",
+        "broken_links_checked": "Έλεγχος broken links",
+        "forms_tested": "Δοκιμή φορμών",
+        "checkout_tested": "Δοκιμή checkout",
+        "cache_cleared": "Καθαρισμός cache",
+        "performance_checked": "Έλεγχος απόδοσης",
+        "ssl_checked": "Έλεγχος SSL",
+        "uptime_checked": "Έλεγχος uptime",
+        "other": "Άλλο"
     },
     "clientServices": {
         "title": "Οι Υπηρεσίες μου",

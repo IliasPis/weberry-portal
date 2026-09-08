@@ -10,5 +10,8 @@ export type PageProps<
 > = T & {
     auth: {
         user: User;
+        is_admin_side: boolean;
     };
+    locale: string;
+    unread_notifications_count: number;
 };

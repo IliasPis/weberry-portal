@@ -2,7 +2,9 @@
 import { Link } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 import LocaleSwitcher from '@/Components/LocaleSwitcher.vue';
+import NotificationBell from '@/Components/NotificationBell.vue';
 import UserMenu from '@/Components/UserMenu.vue';
+import GlobalSearch from '@/Components/admin/GlobalSearch.vue';
 import { adminNavItems } from '@/lib/adminNav';
 import {
     Sidebar,
@@ -49,10 +51,12 @@ const { t } = useI18n();
         </Sidebar>
 
         <SidebarInset>
-            <header class="flex h-14 shrink-0 items-center gap-2 border-b px-4">
+            <header class="flex h-14 shrink-0 items-center gap-4 border-b px-4">
                 <SidebarTrigger />
+                <GlobalSearch class="hidden sm:block" />
                 <div class="ml-auto flex items-center gap-2">
                     <LocaleSwitcher />
+                    <NotificationBell />
                     <UserMenu />
                 </div>
             </header>
